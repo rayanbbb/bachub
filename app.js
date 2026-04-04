@@ -283,9 +283,9 @@ const subjectsData = {
             { title: "Calcul Intégral", pdf: 'math-pdf/resume-Calcul-integral-2bac-biof-Sciences-Mathematiques-1.pdf' },
             { title: "Dénombrement", pdf: 'math-pdf/resume-Denombrement-2bac-Sciences-Physiques-et-svt-5.pdf' },
             { title: "Equations Différentielles", pdf: 'math-pdf/resume-Equations-differentielles-2bac-biof-Sciences-Mathematiques-1.pdf' },
-            { title: "Fonctions Exponentielles", pdf: 'math-pdf/resume-Fonctions-exponentielles-2bac-biof-Sciences-Mathematiques-1.pdf' },
+            { title: "Fonctions Exponentielles", pdf: 'math-pdf/resume-Fonctions-exponentielles-2bac-biof-Sciences-Mathematiques-1 (1).pdf' },
             { title: "Géométrie dans l'espace", pdf: 'math-pdf/resume-Geometrie-dans-lespace-2bac-Sciences-Physiques-et-svt-6.pdf' },
-            { title: "Nombres Complexes (Partie 2)", pdf: 'math-pdf/resume-Nombres-complexes-partie1-2bac-biof-Sciences-Mathematiques-1 - Copy.pdf' },
+            { title: "Nombres Complexes (Partie 2)", pdf: 'math-pdf/resume-Nombres-complexes-partie1-2bac-biof-Sciences-Mathematiques-1.pdf' },
             { title: "Probabilités", pdf: 'math-pdf/resume-Probabilites-2bac-biof-Sciences-Mathematiques-1.pdf' }
         ],
         'quizzes': []
@@ -317,19 +317,74 @@ const subjectsData = {
 
 const wataniyatData = {
     'pc': [
-        { title: "2023 - Session Normale", pdf: true },
-        { title: "2023 - Session Rattrapage", pdf: true },
-        { title: "2022 - Session Normale", pdf: true }
+        { title: "2024 - Session Normale", pdf: 'physique-na/examen-national-physique-chimie-spc-2024-normale-sujet.pdf' },
+        { title: "2024 - Session Rattrapage", pdf: 'physique-na/examen-national-physique-chimie-spc-2024-rattrapage-sujet.pdf' },
+        { title: "2023 - Session Normale", pdf: 'physique-na/examen-national-physique-chimie-spc-2023-normale-sujet.pdf' },
+        { title: "2023 - Session Rattrapage", pdf: 'physique-na/examen-national-physique-chimie-spc-2023-rattrapage-sujet.pdf' },
+        { title: "2022 - Session Normale", pdf: 'physique-na/examen-national-physique-chimie-spc-2022-normale-sujet.pdf' },
+        { title: "2022 - Session Rattrapage", pdf: 'physique-na/examen-national-physique-chimie-spc-2022-rattrapage-sujet.pdf' },
+        { title: "2021 - Session Normale", pdf: 'physique-na/examen-national-physique-chimie-spc-2021-normale-sujet.pdf' },
+        { title: "2021 - Session Rattrapage", pdf: 'physique-na/examen-national-physique-chimie-spc-2021-rattrapage-sujet.pdf' },
+        { title: "2020 - Session Normale", pdf: 'physique-na/examen-national-physique-chimie-spc-2020-normale-sujet.pdf' },
+        { title: "2020 - Session Rattrapage", pdf: 'physique-na/examen-national-physique-chimie-spc-2020-rattrapage-sujet.pdf' }
     ],
     'math': [
-        { title: "2023 - Session Normale", pdf: true },
-        { title: "2022 - Session Normale", pdf: true }
+        { title: "2025 - Session Normale", pdf: 'math-na/Examen National 2025 - Session Normal.pdf' },
+        { title: "2025 - Session Rattrapage", pdf: 'math-na/Examen National 2025 Session Rattrapage.pdf' },
+        { title: "2024 - Session Normale", pdf: 'math-na/Examen National 2024 - Session Normal.pdf' },
+        { title: "2024 - Session Rattrapage", pdf: 'math-na/Examen National 2024 - Session Rattrapage.pdf' },
+        { title: "2023 - Session Normale", pdf: 'math-na/Normal 2023.pdf' },
+        { title: "2023 - Session Rattrapage", pdf: 'math-na/Rattrapage 2023.pdf' },
+        { title: "2022 - Session Normale", pdf: 'math-na/Normal 2022.pdf' },
+        { title: "2022 - Session Rattrapage", pdf: 'math-na/Rattrapage 2022.pdf' },
+        { title: "2021 - Session Normale", pdf: 'math-na/Normal 2021.pdf' },
+        { title: "2021 - Session Rattrapage", pdf: 'math-na/Rattrapage 2021.pdf' },
+        { title: "2020 - Session Normale", pdf: 'math-na/Normal 2020.pdf' },
+        { title: "2020 - Session Rattrapage", pdf: 'math-na/Rattrapage 2020.pdf' }
     ],
     'svt': [
-        { title: "2023 - Session Normale", pdf: true }
+        { title: "2025 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2025-normale-sujet.pdf' },
+        { title: "2023 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2023-normale-sujet.pdf' },
+        { title: "2023 - Session Rattrapage", pdf: 'svt-na/examen-national-svt-sciences-physiques-2023-rattrapage-sujet.pdf' },
+        { title: "2022 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2022-normale-sujet.pdf' },
+        { title: "2022 - Session Rattrapage", pdf: 'svt-na/examen-national-svt-sciences-physiques-2022-rattrapage-sujet.pdf' },
+        { title: "2021 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2021-normale-sujet.pdf' },
+        { title: "2021 - Session Rattrapage", pdf: 'svt-na/examen-national-svt-sciences-physiques-2021-rattrapage-sujet.pdf' },
+        { title: "2020 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2020-normale-sujet.pdf' },
+        { title: "2020 - Session Rattrapage", pdf: 'svt-na/examen-national-svt-sciences-physiques-2020-rattrapage-sujet.pdf' },
+        { title: "2019 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2019-normale-sujet.pdf' },
+        { title: "2019 - Session Rattrapage", pdf: 'svt-na/examen-national-svt-sciences-physiques-2019-rattrapage-sujet.pdf' },
+        { title: "2018 - Session Normale", pdf: 'svt-na/examen-national-svt-sciences-physiques-2018-normale-sujet.pdf' },
+        { title: "2018 - Session Rattrapage", pdf: 'svt-na/examen-national-svt-sciences-physiques-2018-rattrapage-sujet.pdf' }
     ],
-    'english': [],
-    'philo': []
+    'english': [
+        { title: "English - 2023 Session Normale", pdf: 'eng-na/examen-anglais-2023-session-normale-sujet.pdf' },
+        { title: "English - 2023 Session Rattrapage", pdf: 'eng-na/examen-anglais-2023-session-rattrapage-sujet.pdf' },
+        { title: "English - 2022 Session Normale", pdf: 'eng-na/examen-anglais-2022-session-normale-sujet-1.pdf' },
+        { title: "English - 2022 Session Rattrapage", pdf: 'eng-na/examen-anglais-2022-session-rattrapage-sujet.pdf' },
+        { title: "English - 2021 Session Normale", pdf: true },
+        { title: "English - 2021 Session Rattrapage", pdf: 'eng-na/examen-anglais-2021-session-rattrapage-sujet.pdf' },
+        { title: "English - 2020 Session Normale", pdf: 'eng-na/examen-anglais-2020-session-normale-sujet-1.pdf' },
+        { title: "English - 2020 Session Rattrapage", pdf: true },
+        { title: "English - 2019 Session Normale", pdf: 'eng-na/examen-anglais-2019-session-normale-sujet.pdf' },
+        { title: "English - 2019 Session Rattrapage", pdf: 'eng-na/examen-anglais-2019-session-rattrapage-sujet.pdf' },
+        { title: "English - 2018 Session Normale", pdf: 'eng-na/examen-anglais-2018-session-normale-sujet.pdf' },
+        { title: "English - 2018 Session Rattrapage", pdf: 'eng-na/examen-anglais-2018-session-rattrapage-sujet.pdf' },
+        { title: "English - 2017 Session Normale", pdf: 'eng-na/examen-anglais-2017-session-normale-sujet-1.pdf' },
+        { title: "English - 2017 Session Rattrapage", pdf: 'eng-na/examen-anglais-2017-session-rattrapage-sujet-1.pdf' },
+        { title: "English - 2016 Session Normale", pdf: 'eng-na/examen-anglais-2016-session-normale-sujet-1.pdf' },
+        { title: "English - 2016 Session Rattrapage", pdf: 'eng-na/examen-anglais-2016-session-rattrapage-sujet-1.pdf' }
+    ],
+    'philo': [
+        { title: "Philosophy - 2023 Session Normale", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2023-aldora-alaadia-almodhoa.pdf' },
+        { title: "Philosophy - 2023 Session Rattrapage", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2023-aldora-alistdrakia-almodhoa.pdf' },
+        { title: "Philosophy - 2022 Session Normale", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2022-aldora-alaadia-almodhoa.pdf' },
+        { title: "Philosophy - 2022 Session Rattrapage", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2022-aldora-alistdrakia-almodhoa.pdf' },
+        { title: "Philosophy - 2021 Session Normale", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2021-aldora-alaadia-almodhoa.pdf' },
+        { title: "Philosophy - 2021 Session Rattrapage", pdf: true },
+        { title: "Philosophy - 2020 Session Normale", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2020-aldora-alaadia-almodhoa.pdf' },
+        { title: "Philosophy - 2020 Session Rattrapage", pdf: 'Philosophie-na/alflsfa-llshab-alalmia-oaltqnia-2020-aldora-alistdrakia-almodhoa.pdf' }
+    ]
 };
 
 function showSubject(topic) {
