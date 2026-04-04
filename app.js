@@ -476,7 +476,7 @@ const sendBtn = document.getElementById('send-btn');
 const chatInput = document.getElementById('chat-input');
 const chatMessages = document.getElementById('chat-messages');
 const chatStatusBadge = document.querySelector('.chat-status');
-const AI_PROXY_URL = 'https://bachub-ai-proxy.YOUR-WORKERS-SUBDOMAIN.workers.dev';
+const AI_PROXY_URL = 'https://bachub-ai-proxy.bacfjib.workers.dev';
 let chatHistory = [];
 let chatBusy = false;
 
