@@ -10,7 +10,7 @@ from flask_cors import CORS
 ROOT = Path(__file__).resolve().parent
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "5000"))
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "anthropic/claude-sonnet-4-5")
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "anthropic/claude-sonnet-4.5")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = os.getenv("OPENROUTER_URL", "https://openrouter.ai/api/v1/chat/completions")
 SITE_URL = os.getenv("SITE_URL", "https://rayanbbb.github.io/bachub/")
@@ -121,7 +121,7 @@ def send_openrouter_request(upstream_payload: dict) -> dict:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "HTTP-Referer": SITE_URL,
-            "X-Title": SITE_TITLE,
+            "X-OpenRouter-Title": SITE_TITLE,
         },
         method="POST",
     )
@@ -153,7 +153,7 @@ def api_chat():
     lang = payload.get("lang", "en")
     subject = payload.get("subject", "pc")
     category = payload.get("category", "sem1")
-    history = payload.get("history", [])[-8:]
+    history = payload.get("history", [])
 
     messages = [{"role": "system", "content": build_system_prompt(lang, subject, category)}]
     for item in history:
