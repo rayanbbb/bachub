@@ -522,7 +522,7 @@ async function handleChatSend() {
                 lang: currentLang,
                 subject: currentSubject,
                 category: currentCategory,
-                history: chatHistory.slice(-8)
+                history: chatHistory
             })
         });
 
@@ -535,7 +535,7 @@ async function handleChatSend() {
         chatHistory.push({ role: 'assistant', content: data.reply });
         setChatStatus('idle');
     } catch (error) {
-        const fallback = translations[currentLang].ai_error_message || 'The AI assistant is not available right now. Make sure the local AI server is running.';
+        const fallback = translations[currentLang].ai_error_message || 'The AI assistant is not available right now. Make sure the AI server is running.';
         addMessage(fallback, false);
         setChatStatus('error');
     } finally {

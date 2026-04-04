@@ -10,9 +10,11 @@ from flask_cors import CORS
 ROOT = Path(__file__).resolve().parent
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "5000"))
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.2")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_URL = os.getenv("OPENAI_CHAT_URL", "https://api.openai.com/v1/chat/completions")
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "anthropic/claude-sonnet-4-5")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+OPENROUTER_URL = os.getenv("OPENROUTER_URL", "https://openrouter.ai/api/v1/chat/completions")
+SITE_URL = os.getenv("SITE_URL", "https://rayanbbb.github.io/bachub/")
+SITE_TITLE = os.getenv("SITE_TITLE", "BacHub")
 
 app = Flask(__name__, static_folder=str(ROOT), static_url_path="")
 CORS(app)
@@ -77,29 +79,17 @@ def build_system_prompt(lang: str, subject: str, category: str) -> str:
     subject_info = SUBJECT_CONTEXT.get(subject, {"label": "General Bac Support", "topics": []})
     subject_block = ", ".join(subject_info["topics"]) if subject_info["topics"] else "General bac support"
 
-    language_instruction = {
-        "ar": "Answer in clear Moroccan Arabic or simple Arabic depending on the student's wording.",
-        "fr": "Answer in clear French adapted for Moroccan bac students.",
-        "en": "Answer in clear English adapted for Moroccan bac students.",
-    }.get(lang, "Answer in the user's language.")
-
     return (
-        "You are BacHub AI Tutor, a high-quality tutor for Moroccan 2BAC students. "
-        "Your job is to explain lessons, solve exercises step by step, generate training questions, "
-        "and guide students using the subject framework and exam style. "
-        f"Current subject: {subject_info['label']}. "
-        f"Current area: {category}. "
-        f"Relevant curriculum topics: {subject_block}. "
-        f"{language_instruction} "
-        "Rules: "
-        "1. When the student asks a direct exercise, solve it step by step and explain the method. "
-        "2. When the question is vague, ask one short clarifying question first. "
-        "3. Keep explanations structured and student-friendly. "
-        "4. Align your explanations with the Moroccan 2BAC cadre referentiel, expected competencies, and national exam style whenever possible. "
-        "5. If the answer depends on a specific official document you do not actually have, say that clearly and still help with the closest correct method. "
-        "6. Prefer exam-oriented reasoning, short formulas, useful definitions, and practical examples. "
-        "7. If the student asks for exercises, generate good bac-style exercises with solutions. "
-        "8. When helpful, finish with a short recap or a quick method checklist the student can memorize."
+        "You are an expert Moroccan Bac tutor specializing in 2BAC PC "
+        "(Physics-Chemistry and Mathematics). You help students understand lessons, "
+        "solve exercises, and prepare for the national exam. Answer in the same language "
+        "the student uses (Arabic darija, French, or English). Be clear, encouraging, and pedagogical. "
+        f"Current UI language: {lang}. "
+        f"Current subject tab: {subject_info['label']}. "
+        f"Current category tab: {category}. "
+        f"Relevant topics on this screen: {subject_block}. "
+        "Prefer step-by-step solutions, concise formulas, bac-style reasoning, and practical examples. "
+        "If a student request is ambiguous, ask one short clarifying question first."
     )
 
 
@@ -123,13 +113,15 @@ def extract_reply(payload: dict) -> str:
     return ""
 
 
-def send_openai_request(upstream_payload: dict) -> dict:
+def send_openrouter_request(upstream_payload: dict) -> dict:
     req = urllib_request.Request(
-        OPENAI_URL,
+        OPENROUTER_URL,
         data=json.dumps(upstream_payload).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "HTTP-Referer": SITE_URL,
+            "X-Title": SITE_TITLE,
         },
         method="POST",
     )
@@ -149,9 +141,9 @@ def api_chat():
     if not isinstance(payload, dict):
         return jsonify({"error": "Invalid request body."}), 400
 
-    if not OPENAI_API_KEY:
+    if not OPENROUTER_API_KEY:
         return jsonify({
-            "error": "OPENAI_API_KEY is missing. Start the server with your API key."
+            "error": "OPENROUTER_API_KEY is missing. Start the server with your API key."
         }), 500
 
     user_message = (payload.get("message") or "").strip()
@@ -172,16 +164,15 @@ def api_chat():
     messages.append({"role": "user", "content": user_message})
 
     upstream_payload = {
-        "model": OPENAI_MODEL,
+        "model": OPENROUTER_MODEL,
         "messages": messages,
-        "reasoning_effort": "medium",
     }
 
     try:
-        result = send_openai_request(upstream_payload)
+        result = send_openrouter_request(upstream_payload)
     except error.HTTPError as exc:
         details = exc.read().decode("utf-8", errors="ignore")
-        return jsonify({"error": details or "OpenAI API error."}), exc.code
+        return jsonify({"error": details or "OpenRouter API error."}), exc.code
     except Exception as exc:
         return jsonify({"error": str(exc)}), 502
 
@@ -191,7 +182,7 @@ def api_chat():
 
     return jsonify({
         "reply": reply,
-        "model": OPENAI_MODEL,
+        "model": OPENROUTER_MODEL,
         "live": True,
     })
 

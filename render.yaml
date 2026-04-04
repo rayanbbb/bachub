@@ -5,7 +5,11 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT ai_server:app
     envVars:
-      - key: OPENAI_API_KEY
+      - key: OPENROUTER_API_KEY
         sync: false
-      - key: OPENAI_MODEL
-        value: gpt-5.2
+      - key: OPENROUTER_MODEL
+        value: anthropic/claude-sonnet-4-5
+      - key: SITE_URL
+        value: https://rayanbbb.github.io/bachub/
+      - key: SITE_TITLE
+        value: BacHub
