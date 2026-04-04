@@ -513,7 +513,7 @@ async function handleChatSend() {
     setChatStatus('loading');
 
     try {
-        const response = await fetch(`${AI_PROXY_URL}/api/chat`, {
+        const response = await fetch(AI_PROXY_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
