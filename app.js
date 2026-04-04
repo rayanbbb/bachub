@@ -476,6 +476,11 @@ const sendBtn = document.getElementById('send-btn');
 const chatInput = document.getElementById('chat-input');
 const chatMessages = document.getElementById('chat-messages');
 const chatStatusBadge = document.querySelector('.chat-status');
+const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_MODEL = 'qwen/qwen3-6-plus:free';
+const OPENROUTER_SITE_URL = 'https://rayanbbb.github.io/bachub/';
+const OPENROUTER_SITE_TITLE = 'BacHub';
+const OPENROUTER_KEY_STORAGE = 'bachub_openrouter_key';
 let chatHistory = [];
 let chatBusy = false;
 
@@ -500,10 +505,51 @@ function setChatStatus(mode) {
     chatStatusBadge.textContent = labels[mode] || labels.idle;
 }
 
+function getOpenRouterApiKey() {
+    const savedKey = localStorage.getItem(OPENROUTER_KEY_STORAGE);
+    if (savedKey) return savedKey;
+
+    const enteredKey = window.prompt('Enter your OpenRouter API key to enable AI chat:');
+    const normalizedKey = enteredKey ? enteredKey.trim() : '';
+    if (!normalizedKey) return '';
+
+    localStorage.setItem(OPENROUTER_KEY_STORAGE, normalizedKey);
+    return normalizedKey;
+}
+
+function buildTutorSystemPrompt() {
+    return "You are an expert Moroccan Bac tutor specializing in 2BAC PC (Physics-Chemistry and Mathematics). You help students understand lessons, solve exercises, and prepare for the national exam. Answer in the same language the student uses (Arabic darija, French, or English). Be clear, encouraging, and pedagogical.";
+}
+
+function extractOpenRouterReply(data) {
+    const choices = Array.isArray(data?.choices) ? data.choices : [];
+    if (!choices.length) return '';
+
+    const content = choices[0]?.message?.content;
+    if (typeof content === 'string') return content.trim();
+
+    if (Array.isArray(content)) {
+        return content
+            .filter(item => item && item.type === 'text' && item.text)
+            .map(item => item.text)
+            .join('\n')
+            .trim();
+    }
+
+    return '';
+}
+
 async function handleChatSend() {
     if (chatBusy) return;
     const text = chatInput.value.trim();
     if (!text) return;
+
+    const apiKey = getOpenRouterApiKey();
+    if (!apiKey) {
+        setChatStatus('error');
+        addMessage('OpenRouter API key is required to use AI chat.', false);
+        return;
+    }
 
     chatBusy = true;
     addMessage(text, true);
@@ -512,30 +558,41 @@ async function handleChatSend() {
     setChatStatus('loading');
 
     try {
-        const response = await fetch('/api/chat', {
+        const response = await fetch(OPENROUTER_CHAT_URL, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'HTTP-Referer': OPENROUTER_SITE_URL,
+                'X-OpenRouter-Title': OPENROUTER_SITE_TITLE,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                message: text,
-                lang: currentLang,
-                subject: currentSubject,
-                category: currentCategory,
-                history: chatHistory
+                model: OPENROUTER_MODEL,
+                messages: [
+                    { role: 'system', content: buildTutorSystemPrompt() },
+                    ...chatHistory
+                ]
             })
         });
 
         const data = await response.json();
         if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem(OPENROUTER_KEY_STORAGE);
+            }
             throw new Error(data.error || 'AI request failed');
         }
 
-        addMessage(data.reply, false);
-        chatHistory.push({ role: 'assistant', content: data.reply });
+        const reply = extractOpenRouterReply(data);
+        if (!reply) {
+            throw new Error('Empty AI reply');
+        }
+
+        addMessage(reply, false);
+        chatHistory.push({ role: 'assistant', content: reply });
         setChatStatus('idle');
     } catch (error) {
-        const fallback = translations[currentLang].ai_error_message || 'The AI assistant is not available right now. Make sure the AI server is running.';
+        const fallback = translations[currentLang].ai_error_message || 'The AI assistant is not available right now. Check your OpenRouter key and try again.';
         addMessage(fallback, false);
         setChatStatus('error');
     } finally {
