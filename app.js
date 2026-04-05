@@ -519,6 +519,8 @@ async function handleChatSend() {
             lang: currentLang
         };
 
+        console.log('Sending to Worker:', JSON.stringify(payload));
+
         const response = await fetch(AI_PROXY_URL, {
             method: 'POST',
             headers: {
