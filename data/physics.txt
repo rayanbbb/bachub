@@ -1,0 +1,37 @@
+2BAC PC KNOWLEDGE BASE - PHYSICS
+
+Paste here your physics lessons, formulas, experiment notes, and solved exercises.
+
+Suggested format:
+
+[TOPIC] Mechanical waves
+Definitions:
+- ...
+Key laws:
+- ...
+Method:
+- ...
+Solved exercise:
+- Exercise: ...
+- Solution: ...
+
+[TOPIC] Electricity - RC, RL, RLC
+Definitions:
+- ...
+Key laws:
+- ...
+Solved exercise:
+- ...
+
+[TOPIC] Mechanics
+Definitions:
+- ...
+Equations:
+- ...
+Solved exercise:
+- ...
+
+Important notes:
+- Keep one topic per block.
+- Separate blocks with a blank line.
+- Include formulas, units, and common mistakes.

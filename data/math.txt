@@ -1,0 +1,35 @@
+2BAC PC KNOWLEDGE BASE - MATHEMATICS
+
+Paste here your official course content, summaries, methods, and solved exercises for mathematics.
+
+Suggested format:
+
+[TOPIC] Limits and continuity
+Definitions:
+- ...
+Main rules:
+- ...
+Worked example:
+- Exercise: ...
+- Solution: ...
+
+[TOPIC] Derivatives and function study
+Definitions:
+- ...
+Method:
+- ...
+Solved exercise:
+- ...
+
+[TOPIC] Integrals
+Definitions:
+- ...
+Method:
+- ...
+Solved exercise:
+- ...
+
+Important notes:
+- Keep one topic per block.
+- Separate blocks with a blank line.
+- Add solved bac-style exercises whenever possible.

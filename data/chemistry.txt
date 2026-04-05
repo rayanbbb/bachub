@@ -1,0 +1,37 @@
+2BAC PC KNOWLEDGE BASE - CHEMISTRY
+
+Paste here your chemistry lessons, reaction methods, definitions, and solved exercises.
+
+Suggested format:
+
+[TOPIC] Acid-base reactions
+Definitions:
+- ...
+Main relations:
+- ...
+Method:
+- ...
+Solved exercise:
+- Exercise: ...
+- Solution: ...
+
+[TOPIC] Chemical equilibrium
+Definitions:
+- ...
+Method:
+- ...
+Solved exercise:
+- ...
+
+[TOPIC] Electrolysis and spontaneous evolution
+Definitions:
+- ...
+Key laws:
+- ...
+Solved exercise:
+- ...
+
+Important notes:
+- Keep one topic per block.
+- Separate blocks with a blank line.
+- Include equations, symbols, and reasoning steps.

@@ -1,0 +1,35 @@
+2BAC PC KNOWLEDGE BASE - ENGLISH
+
+Paste here your English lessons, vocabulary, writing methods, grammar notes, and solved exercises.
+
+Suggested format:
+
+[TOPIC] Reading comprehension
+Method:
+- ...
+Common question types:
+- ...
+Solved exercise:
+- Exercise: ...
+- Solution: ...
+
+[TOPIC] Writing paragraph / essay
+Method:
+- ...
+Useful expressions:
+- ...
+Solved exercise:
+- ...
+
+[TOPIC] Grammar and language focus
+Rules:
+- ...
+Examples:
+- ...
+Solved exercise:
+- ...
+
+Important notes:
+- Keep one topic per block.
+- Separate blocks with a blank line.
+- Include model answers and correction notes when possible.

@@ -44,21 +44,21 @@ Object.assign(translations.ar, {
     ai_status_live: "AI / LIVE",
     ai_status_thinking: "AI / THINKING",
     ai_status_error: "AI / ERROR",
-    ai_error_message: "AI mashi disponible daba. Chof wash `ai_server.py` khddam w `OPENROUTER_API_KEY` mazal mazbout."
+    ai_error_message: "AI mashi disponible daba. Chof wash Cloudflare Worker khddam w 3awd jarrab men ba3d chwya."
 });
 
 Object.assign(translations.fr, {
     ai_status_live: "AI / LIVE",
     ai_status_thinking: "AI / THINKING",
     ai_status_error: "AI / ERROR",
-    ai_error_message: "L'assistant IA n'est pas disponible maintenant. Verifiez `ai_server.py` et `OPENROUTER_API_KEY`."
+    ai_error_message: "L'assistant IA n'est pas disponible maintenant. Verifiez le Cloudflare Worker et reessayez dans un moment."
 });
 
 Object.assign(translations.en, {
     ai_status_live: "AI / LIVE",
     ai_status_thinking: "AI / THINKING",
     ai_status_error: "AI / ERROR",
-    ai_error_message: "The AI assistant is unavailable right now. Make sure `ai_server.py` is running and `OPENROUTER_API_KEY` is set."
+    ai_error_message: "The AI assistant is unavailable right now. Check the Cloudflare Worker and try again in a moment."
 });
 
 const cadreReferences = {
