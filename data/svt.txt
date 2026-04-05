@@ -1,0 +1,8 @@
+SVT knowledge base for BacHub
+
+Paste here any manual notes, lesson summaries, solved exercises, and exam strategies for Sciences de la Vie et de la Terre.
+The extractor will append PDF text below inside the auto-generated section.
+
+===== AUTO-EXTRACTED PDF CONTENT START =====
+No PDFs extracted yet.
+===== AUTO-EXTRACTED PDF CONTENT END =====

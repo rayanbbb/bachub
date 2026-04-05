@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -23,10 +24,15 @@ SUBJECT_FILES = {
     "physics": DATA_DIR / "physics.txt",
     "chemistry": DATA_DIR / "chemistry.txt",
     "english": DATA_DIR / "english.txt",
+    "svt": DATA_DIR / "svt.txt",
 }
 SUBJECT_SOURCE_DIRS = {
-    "math": PDFS_DIR / "math",
-    "physics": PDFS_DIR / "physics",
+    "math": [PDFS_DIR / "math"],
+    "physics": [PDFS_DIR / "physics"],
+    "svt": [
+        PDFS_DIR / "svt-pdf",
+        PROJECT_ROOT / "svt-pdf",
+    ],
 }
 
 
@@ -43,6 +49,14 @@ def clean_extracted_text(text: str) -> str:
     text = re.sub(r"\n{3,}", "\n\n", text)
     text = re.sub(r"[ \t]{2,}", " ", text)
     return text.strip()
+
+
+def fingerprint_pdf(pdf_path: Path) -> str:
+    digest = hashlib.sha256()
+    with pdf_path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def extract_pdf_text(pdf_path: Path) -> str:
@@ -103,21 +117,38 @@ def main() -> int:
     skipped: list[tuple[Path, str]] = []
     found_any_pdf = False
 
-    for subject, source_dir in SUBJECT_SOURCE_DIRS.items():
-        if not source_dir.exists():
-            print(f"Source directory not found for {subject}: {source_dir}")
-            update_subject_file(subject, [])
-            continue
+    for subject, source_dirs in SUBJECT_SOURCE_DIRS.items():
+        pdf_files: list[Path] = []
 
-        pdf_files = sorted(source_dir.rglob("*.pdf"))
+        for source_dir in source_dirs:
+            if not source_dir.exists():
+                print(f"Source directory not found for {subject}: {source_dir}")
+                continue
+
+            pdf_files.extend(sorted(source_dir.rglob("*.pdf")))
+
         if not pdf_files:
-            print(f"No PDF files found under {source_dir}")
+            readable_sources = ", ".join(str(path) for path in source_dirs)
+            print(f"No PDF files found under {readable_sources}")
             update_subject_file(subject, [])
             continue
 
         found_any_pdf = True
+        seen_fingerprints: set[str] = set()
 
         for pdf_path in pdf_files:
+            try:
+                fingerprint = fingerprint_pdf(pdf_path)
+            except Exception as exc:  # pragma: no cover - IO runtime errors
+                skipped.append((pdf_path, f"fingerprint failed: {exc}"))
+                continue
+
+            if fingerprint in seen_fingerprints:
+                skipped.append((pdf_path, "duplicate file content"))
+                continue
+
+            seen_fingerprints.add(fingerprint)
+
             try:
                 extracted_text = extract_pdf_text(pdf_path)
             except Exception as exc:  # pragma: no cover - extraction runtime errors

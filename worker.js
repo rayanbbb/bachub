@@ -86,6 +86,25 @@ const KNOWLEDGE_FILES = [
     ]
   },
   {
+    subject: "svt",
+    label: "SVT",
+    filename: "svt.txt",
+    keywords: [
+      "svt",
+      "science de la vie",
+      "science de la terre",
+      "sciences de la vie et de la terre",
+      "life and earth",
+      "biology",
+      "biologie",
+      "geologie",
+      "genetique",
+      "immunologie",
+      "ecologie",
+      "reproduction"
+    ]
+  },
+  {
     subject: "english",
     label: "English",
     filename: "english.txt",
@@ -136,7 +155,7 @@ function jsonResponse(payload, status = 200, origin = ALLOWED_ORIGIN) {
 function buildSystemPrompt(lang, knowledgeContext) {
   let prompt =
     "You are an exceptionally intelligent, helpful, honest, and direct AI study assistant for Moroccan 2BAC PC students. " +
-    "You specialize in the Moroccan 2BAC PC curriculum, especially mathematics, physics, chemistry, and English. " +
+    "You specialize in the Moroccan 2BAC PC curriculum, especially mathematics, physics, chemistry, SVT, and English. " +
     "Always respond naturally in the same language the student uses, whether it is Darija, French, Arabic, or English. " +
     "Your goal is to be the best possible study assistant for Moroccan bac students: clear, pedagogical, supportive, and academically strong. " +
     "Give accurate and detailed explanations, break problems down step by step when useful, and use simple examples when they help understanding. " +
