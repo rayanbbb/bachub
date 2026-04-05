@@ -33,3 +33,7 @@ Important notes:
 - Keep one topic per block.
 - Separate blocks with a blank line.
 - Include model answers and correction notes when possible.
+
+===== AUTO-EXTRACTED PDF CONTENT START =====
+No PDFs extracted yet.
+===== AUTO-EXTRACTED PDF CONTENT END =====

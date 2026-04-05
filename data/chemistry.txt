@@ -35,3 +35,7 @@ Important notes:
 - Keep one topic per block.
 - Separate blocks with a blank line.
 - Include equations, symbols, and reasoning steps.
+
+===== AUTO-EXTRACTED PDF CONTENT START =====
+No PDFs extracted yet.
+===== AUTO-EXTRACTED PDF CONTENT END =====
