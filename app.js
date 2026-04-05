@@ -503,7 +503,7 @@ function setChatStatus(mode) {
 
 async function handleChatSend() {
     if (chatBusy) return;
-    const text = chatInput.value.trim();
+    const text = String(chatInput.value).trim();
     if (!text) return;
 
     chatBusy = true;
