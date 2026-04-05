@@ -1,15 +1,13 @@
-const ALLOWED_ORIGIN = "https://rayanbbb.github.io";
+const ALLOWED_ORIGIN = "*";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_MODEL = "qwen/qwen3-6-plus:free";
+const OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free";
 const SITE_URL = "https://rayanbbb.github.io/bachub/";
 const SITE_TITLE = "BacHub";
-const ROOT_PATH = "/";
 
 function buildCorsHeaders(origin) {
-  const allowedOrigin = origin === ALLOWED_ORIGIN ? origin : ALLOWED_ORIGIN;
   return {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin",
@@ -54,14 +52,17 @@ function extractReply(data) {
   return "";
 }
 
+function parseJsonSafely(text) {
+  try {
+    return text ? JSON.parse(text) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || ALLOWED_ORIGIN;
-    const { pathname } = new URL(request.url);
-
-    if (pathname !== ROOT_PATH) {
-      return jsonResponse({ error: "Not found." }, 404, origin);
-    }
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
@@ -70,23 +71,34 @@ export default {
       });
     }
 
+    if (request.method === "GET") {
+      return jsonResponse({ status: "ok" }, 200, origin);
+    }
+
     if (request.method !== "POST") {
       return jsonResponse({ error: "Method not allowed." }, 405, origin);
     }
 
-    if (origin !== ALLOWED_ORIGIN) {
-      return jsonResponse({ error: "Origin not allowed." }, 403, origin);
-    }
+    // Debug mode: origin restriction is temporarily disabled.
+    // if (origin !== ALLOWED_ORIGIN) {
+    //   return jsonResponse({ error: "Origin not allowed." }, 403, origin);
+    // }
 
     if (!env.OPENROUTER_API_KEY) {
       return jsonResponse({ error: "Missing OPENROUTER_API_KEY secret." }, 500, origin);
     }
 
+    let rawBody = "";
     let body;
     try {
-      body = await request.json();
-    } catch {
-      return jsonResponse({ error: "Invalid JSON body." }, 400, origin);
+      rawBody = await request.text();
+      body = rawBody ? JSON.parse(rawBody) : {};
+    } catch (error) {
+      console.error("Invalid JSON body received:", {
+        error: error instanceof Error ? error.message : String(error),
+        received: rawBody,
+      });
+      return jsonResponse({ error: "Invalid JSON body.", received: rawBody || null }, 400, origin);
     }
 
     const message = (body?.message || "").trim();
@@ -94,7 +106,8 @@ export default {
     const lang = body?.lang || "auto";
 
     if (!message && history.length === 0) {
-      return jsonResponse({ error: "Message is required." }, 400, origin);
+      console.warn("Message is required. Body received:", body);
+      return jsonResponse({ error: "Message is required.", body: body }, 400, origin);
     }
 
     const normalizedHistory = history
@@ -124,8 +137,9 @@ export default {
         headers: {
           "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
+          "Accept": "application/json",
           "HTTP-Referer": SITE_URL,
-          "X-OpenRouter-Title": SITE_TITLE,
+          "X-Title": SITE_TITLE,
         },
         body: JSON.stringify(upstreamPayload),
       });
@@ -134,20 +148,53 @@ export default {
     }
 
     const rawText = await upstreamResponse.text();
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch {
-      return jsonResponse({ error: rawText || "Invalid upstream response." }, 502, origin);
-    }
+    const data = parseJsonSafely(rawText);
 
     if (!upstreamResponse.ok) {
-      return jsonResponse({ error: data?.error?.message || data?.error || "OpenRouter API error." }, upstreamResponse.status, origin);
+      const errorDetails =
+        rawText ||
+        (data ? JSON.stringify(data) : "") ||
+        "OpenRouter returned an empty error response body.";
+      console.error("OpenRouter error response:", {
+        status: upstreamResponse.status,
+        statusText: upstreamResponse.statusText,
+        details: errorDetails,
+      });
+      return jsonResponse(
+        {
+          error: data?.error?.message || data?.error || "OpenRouter API error.",
+          upstreamStatus: upstreamResponse.status,
+          upstreamStatusText: upstreamResponse.statusText,
+          details: errorDetails,
+        },
+        upstreamResponse.status,
+        origin
+      );
+    }
+
+    if (!data) {
+      return jsonResponse(
+        {
+          error: "Invalid upstream response.",
+          upstreamStatus: upstreamResponse.status,
+          details: rawText || null,
+        },
+        502,
+        origin
+      );
     }
 
     const reply = extractReply(data);
     if (!reply) {
-      return jsonResponse({ error: "Empty AI reply." }, 502, origin);
+      return jsonResponse(
+        {
+          error: "Empty AI reply.",
+          upstreamStatus: upstreamResponse.status,
+          details: data,
+        },
+        502,
+        origin
+      );
     }
 
     return jsonResponse(
