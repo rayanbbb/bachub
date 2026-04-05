@@ -88,8 +88,27 @@ function showPdfAlert() {
     alert(translations[currentLang].alert_pdf);
 }
 
-function buildPdfAction(pdfPath) {
-    return pdfPath === true ? "showPdfAlert()" : `window.open('${pdfPath}', '_blank')`;
+function buildPdfButtonMarkup(pdfPath) {
+    if (pdfPath === true) {
+        return `
+            <button class="btn primary-btn" type="button" onclick="showPdfAlert()">
+                <i class='bx bx-link-external'></i>
+                ${translations[currentLang].btn_download}
+            </button>
+        `;
+    }
+
+    const safePath = String(pdfPath)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    return `
+        <a class="btn primary-btn" href="${safePath}" target="_blank" rel="noopener noreferrer">
+            <i class='bx bx-link-external'></i>
+            ${translations[currentLang].btn_download}
+        </a>
+    `;
 }
 
 function renderQuizLayout(question, optionsMarkup) {
@@ -207,10 +226,7 @@ showCategory = function (category) {
                 </div>
                 <span>${item.title}</span>
             </div>
-            <button class="btn primary-btn" type="button" onclick="${buildPdfAction(item.pdf)}">
-                <i class='bx bx-download'></i>
-                ${translations[currentLang].btn_download}
-            </button>
+            ${buildPdfButtonMarkup(item.pdf)}
         </div>
     `).join("");
 };
@@ -243,10 +259,7 @@ showWataniyat = function (topic) {
                 </div>
                 <span>${item.title}</span>
             </div>
-            <button class="btn primary-btn" type="button" onclick="${buildPdfAction(item.pdf)}">
-                <i class='bx bx-download'></i>
-                ${translations[currentLang].btn_download}
-            </button>
+            ${buildPdfButtonMarkup(item.pdf)}
         </div>
     `).join("");
 };

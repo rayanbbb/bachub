@@ -410,7 +410,7 @@ function showCategory(category) {
         const items = subjectsData[currentSubject][category];
         if (items.length > 0) {
             items.forEach(item => {
-        if (category === 'quizzes') {
+                if (category === 'quizzes') {
                     contentDiv.innerHTML += `
                         <div class="quiz-card" onclick="${item.action}">
                             <h4><i class='bx bx-play-circle'></i> ${item.title}</h4>
@@ -418,18 +418,20 @@ function showCategory(category) {
                         </div>
                     `;
                 } else {
-                    let onclickStr = item.pdf === true 
-                        ? `alert('${translations[currentLang].alert_pdf}')` 
-                        : `window.open('${item.pdf}', '_blank')`;
+                    const buttonMarkup = item.pdf === true
+                        ? `<button class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" type="button" onclick="alert('${translations[currentLang].alert_pdf}')">
+                                <i class='bx bx-link-external'></i> ${translations[currentLang].btn_download}
+                           </button>`
+                        : `<a class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" href="${String(item.pdf).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;")}" target="_blank" rel="noopener noreferrer">
+                                <i class='bx bx-link-external'></i> ${translations[currentLang].btn_download}
+                           </a>`;
                     contentDiv.innerHTML += `
                         <div class="lesson-item">
                             <div style="display:flex; align-items:center; gap: 12px;">
                                 <i class='bx bxs-file-pdf' style="color: #f87171; font-size: 1.6rem; flex-shrink:0;"></i>
                                 <span>${item.title}</span>
                             </div>
-                            <button class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" onclick="${onclickStr}">
-                                <i class='bx bx-download'></i> ${translations[currentLang].btn_download}
-                            </button>
+                            ${buttonMarkup}
                         </div>
                     `;
                 }
@@ -451,18 +453,20 @@ function showWataniyat(topic) {
     
     if (wataniyatData[topic] && wataniyatData[topic].length > 0) {
         wataniyatData[topic].forEach(item => {
-            let onclickStr = item.pdf === true 
-                ? `alert('${translations[currentLang].alert_pdf}')` 
-                : `window.open('${item.pdf}', '_blank')`;
+            const buttonMarkup = item.pdf === true
+                ? `<button class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" type="button" onclick="alert('${translations[currentLang].alert_pdf}')">
+                        <i class='bx bx-link-external'></i> ${translations[currentLang].btn_download}
+                   </button>`
+                : `<a class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" href="${String(item.pdf).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;")}" target="_blank" rel="noopener noreferrer">
+                        <i class='bx bx-link-external'></i> ${translations[currentLang].btn_download}
+                   </a>`;
             contentDiv.innerHTML += `
                 <div class="wataniyat-card">
                     <div style="display:flex; align-items:center; gap: 12px;">
                         <i class='bx bx-medal' style="color: #fbbf24; font-size: 1.5rem; flex-shrink:0;"></i>
                         <span>${item.title}</span>
                     </div>
-                    <button class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" onclick="${onclickStr}">
-                        <i class='bx bx-download'></i> ${translations[currentLang].btn_download}
-                    </button>
+                    ${buttonMarkup}
                 </div>
             `;
         });

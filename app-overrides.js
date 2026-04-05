@@ -438,19 +438,27 @@ function showPdfAlert() {
     alert(translations[currentLang].alert_pdf);
 }
 
-function downloadPdf(pdfPath) {
-    const link = document.createElement("a");
-    link.href = pdfPath;
-    link.download = pdfPath.split("/").pop() || "document.pdf";
-    link.rel = "noopener";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-}
+function buildPdfButtonMarkup(pdfPath) {
+    if (pdfPath === true) {
+        return `
+            <button class="btn primary-btn" type="button" onclick="showPdfAlert()">
+                <i class='bx bx-link-external'></i>
+                ${translations[currentLang].btn_download}
+            </button>
+        `;
+    }
 
-function buildPdfAction(pdfPath) {
-    const safePath = String(pdfPath).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-    return pdfPath === true ? "showPdfAlert()" : `downloadPdf('${safePath}')`;
+    const safePath = String(pdfPath)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    return `
+        <a class="btn primary-btn" href="${safePath}" target="_blank" rel="noopener noreferrer">
+            <i class='bx bx-link-external'></i>
+            ${translations[currentLang].btn_download}
+        </a>
+    `;
 }
 
 function renderQuizLayout(question, optionsMarkup) {
@@ -575,10 +583,7 @@ showCategory = function (category) {
                 </div>
                 <span>${item.title}</span>
             </div>
-            <button class="btn primary-btn" type="button" onclick="${buildPdfAction(item.pdf)}">
-                <i class='bx bx-download'></i>
-                ${translations[currentLang].btn_download}
-            </button>
+            ${buildPdfButtonMarkup(item.pdf)}
         </div>
     `).join("");
 };
@@ -611,10 +616,7 @@ showWataniyat = function (topic) {
                 </div>
                 <span>${item.title}</span>
             </div>
-            <button class="btn primary-btn" type="button" onclick="${buildPdfAction(item.pdf)}">
-                <i class='bx bx-download'></i>
-                ${translations[currentLang].btn_download}
-            </button>
+            ${buildPdfButtonMarkup(item.pdf)}
         </div>
     `).join("");
 };
