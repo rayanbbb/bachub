@@ -513,16 +513,18 @@ async function handleChatSend() {
     setChatStatus('loading');
 
     try {
+        const payload = {
+            message: text,
+            history: chatHistory,
+            lang: currentLang
+        };
+
         const response = await fetch(AI_PROXY_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                message: text,
-                history: chatHistory,
-                lang: currentLang
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();
