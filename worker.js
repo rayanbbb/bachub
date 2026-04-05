@@ -3,6 +3,7 @@ const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const OPENROUTER_MODEL = "qwen/qwen3-6-plus:free";
 const SITE_URL = "https://rayanbbb.github.io/bachub/";
 const SITE_TITLE = "BacHub";
+const ROOT_PATH = "/";
 
 function buildCorsHeaders(origin) {
   const allowedOrigin = origin === ALLOWED_ORIGIN ? origin : ALLOWED_ORIGIN;
@@ -56,6 +57,11 @@ function extractReply(data) {
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || ALLOWED_ORIGIN;
+    const { pathname } = new URL(request.url);
+
+    if (pathname !== ROOT_PATH) {
+      return jsonResponse({ error: "Not found." }, 404, origin);
+    }
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
