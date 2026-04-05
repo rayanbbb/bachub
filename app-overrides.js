@@ -236,6 +236,66 @@ subjectsData.math.sem2 = [
     }
 ];
 
+subjectsData.svt = {
+    sem1: [
+        {
+            title: "Première partie: Consommation de la matière organique et flux d’énergie",
+            pdf: "svt-pdf/Cours-Unit1-1.pdf"
+        },
+        {
+            title: "Chapitre 2: Rôle du muscle squelettique strié dans la conversion de l’énergie",
+            pdf: "svt-pdf/Cours-Unit1-2.pdf"
+        },
+        {
+            title: "Deuxième partie: Nature et mécanisme de l’expression du matériel génétique et le génie génétique",
+            pdf: "svt-pdf/Cours-Unit2-1.pdf"
+        },
+        {
+            title: "Chapitre 2: Expression de l’information génétique",
+            pdf: "svt-pdf/Cours-Unit2-2.pdf"
+        },
+        {
+            title: "Chapitre 3: Transfert de l’information génétique au cours de la reproduction sexuée",
+            pdf: "svt-pdf/Cours-Unit2-3.pdf"
+        },
+        {
+            title: "Chapitre 4: Les lois statistiques de la transmission des caractères héréditaires chez les diploïdes",
+            pdf: "svt-pdf/Cours-Unit2-4.pdf"
+        }
+    ],
+    sem2: [
+        {
+            title: "Troisième partie: Utilisation des matières organiques et inorganiques",
+            pdf: "svt-pdf/Cours-Unit3-1.pdf"
+        },
+        {
+            title: "Chapitre 2: Les pollutions issues de la consommation des produits énergétiques, de l’utilisation de la matière organique et inorganique dans les industries chimiques, alimentaires et minérales",
+            pdf: "svt-pdf/Cours-Unit3-2.pdf"
+        },
+        {
+            title: "Chapitre 3: Les matières radioactives et l’énergie nucléaire",
+            pdf: "svt-pdf/Cours-Unit3-3.pdf"
+        },
+        {
+            title: "Chapitre 4: Contrôle de la qualité et de la salubrité des milieux naturels",
+            pdf: "svt-pdf/Cours-Unit3-4.pdf"
+        },
+        {
+            title: "Quatrième partie: Les phénomènes géologiques accompagnant la formation des chaînes de montagnes et leur relation avec la tectonique des plaques",
+            pdf: "svt-pdf/Cours-Unit4-1.pdf"
+        },
+        {
+            title: "Chapitre 2: Le métamorphisme et sa relation avec la tectonique des plaques",
+            pdf: "svt-pdf/Cours-Unit4-2.pdf"
+        },
+        {
+            title: "Chapitre 3: La granitisation et sa relation avec le métamorphisme",
+            pdf: "svt-pdf/Cours-Unit4-3.pdf"
+        }
+    ],
+    quizzes: []
+};
+
 wataniyatData.math = [
     { title: "2025 - Session Normale", pdf: "math-na/Examen National 2025 - Session Normal.pdf" },
     { title: "2025 - Session Rattrapage", pdf: "math-na/Examen National 2025 Session Rattrapage.pdf" },
@@ -378,8 +438,19 @@ function showPdfAlert() {
     alert(translations[currentLang].alert_pdf);
 }
 
+function downloadPdf(pdfPath) {
+    const link = document.createElement("a");
+    link.href = pdfPath;
+    link.download = pdfPath.split("/").pop() || "document.pdf";
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+}
+
 function buildPdfAction(pdfPath) {
-    return pdfPath === true ? "showPdfAlert()" : `window.open('${pdfPath}', '_blank')`;
+    const safePath = String(pdfPath).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    return pdfPath === true ? "showPdfAlert()" : `downloadPdf('${safePath}')`;
 }
 
 function renderQuizLayout(question, optionsMarkup) {
