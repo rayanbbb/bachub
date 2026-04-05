@@ -31,6 +31,7 @@ SUBJECT_SOURCE_DIRS = {
     "physics": [PDFS_DIR / "physics"],
     "svt": [
         PDFS_DIR / "svt-pdf",
+        PDFS_DIR / "svt",
         PROJECT_ROOT / "svt-pdf",
     ],
 }
