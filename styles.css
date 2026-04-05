@@ -2364,3 +2364,306 @@ html[dir="ltr"] .slide-card {
     display: none;
   }
 }
+
+@media (max-width: 767.98px) {
+  .app-container {
+    padding: 14px;
+  }
+
+  .main-content,
+  .view,
+  .section-shell,
+  .subject-content,
+  .slides-grid,
+  .topbar,
+  .hero-shell,
+  .slides-top,
+  .section-header,
+  .chat-header,
+  .item-copy,
+  .quiz-card__content,
+  .chat-container {
+    min-width: 0;
+  }
+
+  .topbar {
+    position: static;
+    gap: 14px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+
+  .brand-lockup,
+  .main-nav,
+  .lang-switcher {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .brand-copy {
+    min-width: 0;
+  }
+
+  .brand-copy span {
+    font-size: 1.08rem;
+    letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
+  }
+
+  .brand-copy small {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    overflow-wrap: anywhere;
+  }
+
+  .nav-links {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .nav-links li {
+    width: 100%;
+    min-width: 0;
+    padding: 0.8rem 0.9rem;
+    gap: 10px;
+  }
+
+  .nav-links li span {
+    min-width: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .lang-switcher {
+    justify-self: stretch;
+  }
+
+  .lang-switcher button {
+    min-width: 0;
+  }
+
+  .topbar,
+  .hero-copy,
+  .hero-scene,
+  .slides-shell,
+  .section-header,
+  .subject-tabs,
+  .inner-tabs,
+  .subject-content,
+  .chat-container {
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .hero-shell {
+    gap: 16px;
+  }
+
+  .hero-copy,
+  .hero-scene {
+    min-height: auto;
+  }
+
+  .hero-copy {
+    gap: 18px;
+  }
+
+  .hero-copy h1 {
+    max-width: none;
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .hero-description,
+  .slides-aside p,
+  .section-header p,
+  .message .text,
+  .item-copy span,
+  .quiz-card h4,
+  .quiz-card p,
+  .sc-title,
+  .sc-subtitle,
+  .sc-lang {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .hero-kicker,
+  .section-kicker,
+  .chat-status {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .hero-actions,
+  .slides-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .hero-actions .btn,
+  .slides-action {
+    width: 100%;
+  }
+
+  .countdown-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .time-box {
+    padding: 16px 14px;
+  }
+
+  .hero-scene {
+    min-height: 360px;
+    --scene-center-x: 50%;
+    --scene-center-y: 50%;
+  }
+
+  .ring-stack {
+    width: min(100%, 360px);
+  }
+
+  .brain-shell {
+    width: min(54%, 220px);
+  }
+
+  .orbit-layer-outer {
+    width: min(100%, 400px);
+  }
+
+  .orbit-layer-middle {
+    width: min(82%, 320px);
+  }
+
+  .orbit-layer-inner {
+    width: min(62%, 240px);
+  }
+
+  .orbit-symbol {
+    min-width: 30px;
+    min-height: 30px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .orbit-wide {
+    min-width: 54px;
+  }
+
+  .hud-card {
+    width: 120px;
+    min-height: 90px;
+    padding: 10px;
+    opacity: 0.6;
+  }
+
+  .hud-card-a {
+    left: 4%;
+    top: 12%;
+  }
+
+  .hud-card-b {
+    right: 4%;
+    bottom: 12%;
+  }
+
+  .data-link {
+    display: none;
+  }
+
+  .slides-top {
+    gap: 14px;
+  }
+
+  .slides-intro h2,
+  .section-header h2,
+  .chat-header h3 {
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
+  }
+
+  .slides-aside,
+  .section-header,
+  .chat-header {
+    justify-items: start;
+    align-items: start;
+  }
+
+  .slides-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .slide-card {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .sc-visual {
+    min-height: 100px;
+  }
+
+  .subject-tabs,
+  .inner-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .tab-btn,
+  .inner-tab-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .subject-content {
+    min-height: 0;
+  }
+
+  .lesson-item,
+  .wataniyat-card,
+  .quiz-card {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .item-copy,
+  .quiz-card__content {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .item-copy > *,
+  .quiz-card__content > * {
+    min-width: 0;
+  }
+
+  .chat-messages {
+    min-height: 280px;
+    max-height: 52vh;
+    padding-inline-end: 0;
+  }
+
+  .message {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .message .text {
+    width: 100%;
+  }
+
+  .chat-inputbox {
+    flex-direction: column;
+  }
+
+  .chat-inputbox input,
+  #send-btn {
+    width: 100%;
+  }
+
+  #send-btn {
+    height: 52px;
+  }
+}
