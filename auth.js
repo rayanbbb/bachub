@@ -116,6 +116,27 @@
         }
     }
 
+    function positionDropdown() {
+        const userMenu = document.getElementById("auth-user-menu");
+        const avatarButton = document.getElementById("auth-avatar-btn");
+        const dropdown = document.getElementById("auth-dropdown");
+
+        if (!userMenu || !avatarButton || !dropdown || userMenu.hidden || dropdown.hidden) {
+            return;
+        }
+
+        const viewportGap = 14;
+        const verticalOffset = 12;
+        const avatarRect = avatarButton.getBoundingClientRect();
+        const dropdownWidth = dropdown.offsetWidth || 260;
+        const maxLeft = window.innerWidth - dropdownWidth - viewportGap;
+        const nextLeft = Math.min(Math.max(avatarRect.right - dropdownWidth, viewportGap), Math.max(viewportGap, maxLeft));
+        const nextTop = avatarRect.bottom + verticalOffset;
+
+        dropdown.style.left = `${nextLeft}px`;
+        dropdown.style.top = `${Math.max(viewportGap, nextTop)}px`;
+    }
+
     function setMenuOpen(isOpen) {
         const userMenu = document.getElementById("auth-user-menu");
         const avatarButton = document.getElementById("auth-avatar-btn");
@@ -129,6 +150,14 @@
         userMenu.classList.toggle("is-open", nextState);
         dropdown.hidden = !nextState;
         avatarButton.setAttribute("aria-expanded", String(nextState));
+
+        if (nextState) {
+            requestAnimationFrame(positionDropdown);
+            return;
+        }
+
+        dropdown.style.removeProperty("top");
+        dropdown.style.removeProperty("left");
     }
 
     function updateProtectedUi(session) {
@@ -274,6 +303,20 @@
                     setMenuOpen(false);
                 }
             });
+
+            window.addEventListener("resize", () => {
+                const dropdown = document.getElementById("auth-dropdown");
+                if (dropdown && !dropdown.hidden) {
+                    positionDropdown();
+                }
+            });
+
+            window.addEventListener("scroll", () => {
+                const dropdown = document.getElementById("auth-dropdown");
+                if (dropdown && !dropdown.hidden) {
+                    positionDropdown();
+                }
+            }, true);
         }
     }
 

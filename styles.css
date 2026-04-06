@@ -344,7 +344,6 @@ body.auth-pending .auth-loader {
 }
 
 .auth-user-menu {
-  position: relative;
   display: inline-flex;
   justify-content: flex-end;
 }
@@ -391,11 +390,12 @@ body.auth-pending .auth-loader {
 }
 
 .auth-dropdown {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  z-index: 12;
-  min-width: 260px;
+  position: fixed;
+  top: 88px;
+  left: calc(100vw - 294px);
+  z-index: 120;
+  width: min(280px, calc(100vw - 28px));
+  max-width: calc(100vw - 28px);
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -2647,10 +2647,7 @@ html[dir="ltr"] .slide-card {
   }
 
   .auth-dropdown {
-    position: static;
-    width: 100%;
-    min-width: 0;
-    margin-top: 10px;
+    width: min(280px, calc(100vw - 28px));
   }
 
   .auth-dropdown__item {
