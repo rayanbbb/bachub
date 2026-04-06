@@ -565,10 +565,13 @@ function buildCourseAccordionMarkup(item, index) {
     const itemTitle = escapeHtml(item.title);
     const coursePdf = item.coursePdf || item.pdf;
     const exercisesPdf = getExercisePdfPath(currentSubject, item);
+    const exercisesMarkup = item.hideExercises
+        ? ""
+        : buildResourceButtonMarkup(exercisesPdf, exercisesLabel, "secondary");
 
     return `
-        <article class="course-accordion-item${index === 0 ? " is-open" : ""}">
-            <button class="course-accordion-trigger" type="button" aria-expanded="${index === 0 ? "true" : "false"}" onclick="toggleCourseAccordion(this)">
+        <article class="course-accordion-item">
+            <button class="course-accordion-trigger" type="button" aria-expanded="false" onclick="toggleCourseAccordion(this)">
                 <div class="course-accordion-copy">
                     <div class="item-icon">
                         <i class='bx bxs-file-pdf'></i>
@@ -584,7 +587,7 @@ function buildCourseAccordionMarkup(item, index) {
             <div class="course-accordion-panel">
                 <div class="course-resource-actions">
                     ${buildResourceButtonMarkup(coursePdf, courseLabel)}
-                    ${buildResourceButtonMarkup(exercisesPdf, exercisesLabel, "secondary")}
+                    ${exercisesMarkup}
                 </div>
             </div>
         </article>
@@ -710,7 +713,7 @@ showCategory = function (category) {
         items.unshift({
             title: translations[currentLang].cadre_reference,
             pdf: cadreReferences[currentSubject],
-            exercisePdf: true
+            hideExercises: true
         });
     }
 
