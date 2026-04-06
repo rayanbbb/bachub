@@ -30,6 +30,12 @@
 
             <form class="auth-form" data-auth-form>
                 <div class="auth-field">
+                    <label for="signup-display-name">Display Name</label>
+                    <input id="signup-display-name" name="displayName" type="text" autocomplete="nickname" required>
+                    <small class="auth-field__hint">This name appears in your account menu after login.</small>
+                </div>
+
+                <div class="auth-field">
                     <label for="signup-email">Email</label>
                     <input id="signup-email" name="email" type="email" autocomplete="email" required>
                 </div>

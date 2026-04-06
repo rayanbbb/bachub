@@ -255,6 +255,12 @@ input:focus {
   font-size: 0.94rem;
 }
 
+.auth-field__hint {
+  color: var(--auth-muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
 .auth-button {
   display: inline-flex;
   align-items: center;

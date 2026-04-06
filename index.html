@@ -59,14 +59,34 @@
                 </div>
 
                 <div class="auth-controls">
-                    <div class="auth-user-chip panel-surface" id="auth-user-chip" hidden>
-                        <i class="bx bx-user-circle"></i>
-                        <span id="auth-user-email"></span>
+                    <div class="auth-user-menu" id="auth-user-menu" hidden>
+                        <button class="auth-avatar-btn panel-surface" id="auth-avatar-btn" type="button" aria-haspopup="menu" aria-expanded="false" hidden>
+                            <span class="auth-avatar-initial" id="auth-avatar-initial">B</span>
+                        </button>
+
+                        <div class="auth-dropdown panel-surface" id="auth-dropdown" hidden>
+                            <div class="auth-dropdown__identity">
+                                <span class="auth-dropdown__eyebrow">Signed in as</span>
+                                <strong id="auth-menu-name"></strong>
+                                <small id="auth-menu-email" hidden></small>
+                            </div>
+
+                            <button class="auth-dropdown__item" id="auth-profile-btn" type="button">
+                                <i class="bx bx-user"></i>
+                                <span>Profile</span>
+                            </button>
+
+                            <button class="auth-dropdown__item" id="auth-settings-btn" type="button">
+                                <i class="bx bx-cog"></i>
+                                <span>Settings</span>
+                            </button>
+
+                            <button class="auth-dropdown__item auth-dropdown__item--danger" id="logout-btn" type="button">
+                                <i class="bx bx-log-out-circle"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
                     </div>
-                    <button class="logout-btn panel-surface" id="logout-btn" type="button" hidden>
-                        <i class="bx bx-log-out-circle"></i>
-                        <span>Logout</span>
-                    </button>
                 </div>
             </div>
         </header>

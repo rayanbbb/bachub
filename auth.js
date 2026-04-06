@@ -65,6 +65,31 @@
         window.location.replace(path);
     }
 
+    function getUserDisplayName(user) {
+        const metadataName = user?.user_metadata?.display_name;
+        if (typeof metadataName === "string" && metadataName.trim()) {
+            return metadataName.trim();
+        }
+
+        const fullName = user?.user_metadata?.full_name;
+        if (typeof fullName === "string" && fullName.trim()) {
+            return fullName.trim();
+        }
+
+        const email = user?.email || "";
+        if (email.includes("@")) {
+            return email.split("@")[0];
+        }
+
+        return "Student";
+    }
+
+    function getUserInitial(user) {
+        const displayName = getUserDisplayName(user).trim();
+        const [firstChar = "S"] = Array.from(displayName);
+        return firstChar.toUpperCase();
+    }
+
     function setFormMessage(type, message) {
         const messageBox = document.querySelector("[data-auth-message]");
         if (!messageBox) {
@@ -91,41 +116,94 @@
         }
     }
 
-    function updateProtectedUi(session) {
-        const email = session?.user?.email || "Signed in";
-        const userChip = document.getElementById("auth-user-chip");
-        const userEmail = document.getElementById("auth-user-email");
-        const logoutButton = document.getElementById("logout-btn");
+    function setMenuOpen(isOpen) {
+        const userMenu = document.getElementById("auth-user-menu");
+        const avatarButton = document.getElementById("auth-avatar-btn");
+        const dropdown = document.getElementById("auth-dropdown");
 
-        if (userEmail) {
-            userEmail.textContent = email;
+        if (!userMenu || !avatarButton || !dropdown) {
+            return;
         }
 
-        if (userChip) {
-            userChip.hidden = false;
+        const nextState = Boolean(isOpen) && !userMenu.hidden && !avatarButton.hidden;
+        userMenu.classList.toggle("is-open", nextState);
+        dropdown.hidden = !nextState;
+        avatarButton.setAttribute("aria-expanded", String(nextState));
+    }
+
+    function updateProtectedUi(session) {
+        const user = session?.user || null;
+        const displayName = getUserDisplayName(user);
+        const email = user?.email || "";
+        const userMenu = document.getElementById("auth-user-menu");
+        const avatarButton = document.getElementById("auth-avatar-btn");
+        const avatarInitial = document.getElementById("auth-avatar-initial");
+        const menuName = document.getElementById("auth-menu-name");
+        const menuEmail = document.getElementById("auth-menu-email");
+        const logoutButton = document.getElementById("logout-btn");
+
+        if (avatarInitial) {
+            avatarInitial.textContent = getUserInitial(user);
+        }
+
+        if (menuName) {
+            menuName.textContent = displayName;
+        }
+
+        if (menuEmail) {
+            menuEmail.textContent = email;
+            menuEmail.hidden = !email;
+        }
+
+        if (userMenu) {
+            userMenu.hidden = false;
+        }
+
+        if (avatarButton) {
+            avatarButton.hidden = false;
+            avatarButton.disabled = false;
+            avatarButton.setAttribute("aria-label", `Open account menu for ${displayName}`);
         }
 
         if (logoutButton) {
-            logoutButton.hidden = false;
             logoutButton.disabled = false;
         }
     }
 
     function clearProtectedUi() {
-        const userChip = document.getElementById("auth-user-chip");
-        const userEmail = document.getElementById("auth-user-email");
+        const userMenu = document.getElementById("auth-user-menu");
+        const avatarButton = document.getElementById("auth-avatar-btn");
+        const avatarInitial = document.getElementById("auth-avatar-initial");
+        const menuName = document.getElementById("auth-menu-name");
+        const menuEmail = document.getElementById("auth-menu-email");
         const logoutButton = document.getElementById("logout-btn");
 
-        if (userEmail) {
-            userEmail.textContent = "";
+        setMenuOpen(false);
+
+        if (avatarInitial) {
+            avatarInitial.textContent = "B";
         }
 
-        if (userChip) {
-            userChip.hidden = true;
+        if (menuName) {
+            menuName.textContent = "";
+        }
+
+        if (menuEmail) {
+            menuEmail.textContent = "";
+            menuEmail.hidden = true;
+        }
+
+        if (userMenu) {
+            userMenu.hidden = true;
+        }
+
+        if (avatarButton) {
+            avatarButton.hidden = true;
+            avatarButton.disabled = false;
+            avatarButton.removeAttribute("aria-label");
         }
 
         if (logoutButton) {
-            logoutButton.hidden = true;
             logoutButton.disabled = false;
         }
     }
@@ -139,6 +217,66 @@
         return data.session;
     }
 
+    function handleMenuPlaceholder(label) {
+        setMenuOpen(false);
+        alert(`${label} will be available soon.`);
+    }
+
+    function initUserMenu() {
+        const userMenu = document.getElementById("auth-user-menu");
+        const avatarButton = document.getElementById("auth-avatar-btn");
+        const profileButton = document.getElementById("auth-profile-btn");
+        const settingsButton = document.getElementById("auth-settings-btn");
+
+        if (!userMenu || !avatarButton) {
+            return;
+        }
+
+        if (avatarButton.dataset.bound !== "true") {
+            avatarButton.dataset.bound = "true";
+            avatarButton.addEventListener("click", (event) => {
+                event.stopPropagation();
+                const willOpen = avatarButton.getAttribute("aria-expanded") !== "true";
+                setMenuOpen(willOpen);
+            });
+        }
+
+        if (profileButton && profileButton.dataset.bound !== "true") {
+            profileButton.dataset.bound = "true";
+            profileButton.addEventListener("click", () => {
+                handleMenuPlaceholder("Profile");
+            });
+        }
+
+        if (settingsButton && settingsButton.dataset.bound !== "true") {
+            settingsButton.dataset.bound = "true";
+            settingsButton.addEventListener("click", () => {
+                handleMenuPlaceholder("Settings");
+            });
+        }
+
+        if (!window.__bachubMenuListenersBound) {
+            window.__bachubMenuListenersBound = true;
+
+            document.addEventListener("click", (event) => {
+                const currentMenu = document.getElementById("auth-user-menu");
+                if (!currentMenu || currentMenu.hidden) {
+                    return;
+                }
+
+                if (!currentMenu.contains(event.target)) {
+                    setMenuOpen(false);
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    setMenuOpen(false);
+                }
+            });
+        }
+    }
+
     function initLogout() {
         const logoutButton = document.getElementById("logout-btn");
         if (!logoutButton || logoutButton.dataset.bound === "true") {
@@ -148,6 +286,7 @@
         logoutButton.dataset.bound = "true";
         logoutButton.addEventListener("click", async () => {
             logoutButton.disabled = true;
+            setMenuOpen(false);
 
             try {
                 const { error } = await getClient().auth.signOut();
@@ -184,6 +323,7 @@
 
     async function requireAuth() {
         setPendingState(true);
+        initUserMenu();
         initLogout();
         initAuthSubscription();
         let shouldReveal = false;
@@ -267,11 +407,12 @@
     }
 
     async function handleSignup(form) {
+        const displayName = form.displayName.value.trim();
         const email = form.email.value.trim();
         const password = form.password.value;
 
-        if (!email || !password) {
-            setFormMessage("error", "Enter both email and password.");
+        if (!displayName || !email || !password) {
+            setFormMessage("error", "Enter your display name, email, and password.");
             return;
         }
 
@@ -288,7 +429,10 @@
                 email,
                 password,
                 options: {
-                    emailRedirectTo: new URL(HOME_PAGE, window.location.href).href
+                    emailRedirectTo: new URL(HOME_PAGE, window.location.href).href,
+                    data: {
+                        display_name: displayName
+                    }
                 }
             });
 
@@ -302,7 +446,7 @@
                 return;
             }
 
-            setFormMessage("success", "Account created. Check your email to confirm your signup, then log in.");
+            setFormMessage("success", `Account created for ${displayName}. Check your email to confirm your signup, then log in.`);
             form.reset();
         } catch (error) {
             console.error("Signup failed", error);
