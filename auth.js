@@ -151,9 +151,22 @@
         }
     }
 
+    function getDropdown() {
+        const dropdown = document.getElementById("auth-dropdown");
+        if (!dropdown) {
+            return null;
+        }
+
+        if (dropdown.parentElement !== document.body) {
+            document.body.appendChild(dropdown);
+        }
+
+        return dropdown;
+    }
+
     function positionDropdown() {
         const avatarButton = document.getElementById("auth-avatar-btn");
-        const dropdown = document.getElementById("auth-dropdown");
+        const dropdown = getDropdown();
 
         if (!avatarButton || !dropdown || avatarButton.hidden || dropdown.hidden) {
             return;
@@ -162,7 +175,7 @@
         const viewportGap = 14;
         const verticalOffset = 12;
         const avatarRect = avatarButton.getBoundingClientRect();
-        const dropdownWidth = dropdown.offsetWidth || 260;
+        const dropdownWidth = dropdown.offsetWidth || dropdown.getBoundingClientRect().width || 260;
         const maxLeft = window.innerWidth - dropdownWidth - viewportGap;
         const nextLeft = Math.min(Math.max(avatarRect.right - dropdownWidth, viewportGap), Math.max(viewportGap, maxLeft));
         const nextTop = avatarRect.bottom + verticalOffset;
@@ -174,7 +187,7 @@
     function setMenuOpen(isOpen) {
         const userMenu = document.getElementById("auth-user-menu");
         const avatarButton = document.getElementById("auth-avatar-btn");
-        const dropdown = document.getElementById("auth-dropdown");
+        const dropdown = getDropdown();
 
         if (!userMenu || !avatarButton || !dropdown) {
             return;
@@ -319,6 +332,8 @@
             return;
         }
 
+        getDropdown();
+
         if (avatarButton.dataset.bound !== "true") {
             avatarButton.dataset.bound = "true";
             avatarButton.addEventListener("click", (event) => {
@@ -347,11 +362,17 @@
 
             document.addEventListener("click", (event) => {
                 const currentMenu = document.getElementById("auth-user-menu");
-                if (!currentMenu || currentMenu.hidden) {
+                const currentAvatar = document.getElementById("auth-avatar-btn");
+                const currentDropdown = document.getElementById("auth-dropdown");
+
+                if (!currentMenu || currentMenu.hidden || !currentAvatar) {
                     return;
                 }
 
-                if (!currentMenu.contains(event.target)) {
+                const clickedAvatar = currentAvatar.contains(event.target);
+                const clickedDropdown = currentDropdown && !currentDropdown.hidden && currentDropdown.contains(event.target);
+
+                if (!clickedAvatar && !clickedDropdown) {
                     setMenuOpen(false);
                 }
             });

@@ -394,7 +394,7 @@ body.auth-pending .auth-loader {
   position: fixed;
   top: 88px;
   left: calc(100vw - 294px);
-  z-index: 120;
+  z-index: 9999;
   width: min(280px, calc(100vw - 28px));
   max-width: calc(100vw - 28px);
   display: grid;
@@ -408,6 +408,7 @@ body.auth-pending .auth-loader {
     var(--panel-strong);
   box-shadow: 0 26px 70px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(20px);
+  pointer-events: auto;
 }
 
 .auth-dropdown__identity {
