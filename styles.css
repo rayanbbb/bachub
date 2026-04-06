@@ -2051,9 +2051,10 @@ html[dir="ltr"] .slide-card {
 }
 
 .course-accordion-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--ease);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--ease), opacity 0.18s ease;
 }
 
 .course-accordion-panel > * {
@@ -2061,7 +2062,7 @@ html[dir="ltr"] .slide-card {
 }
 
 .course-accordion-item.is-open .course-accordion-panel {
-  grid-template-rows: 1fr;
+  opacity: 1;
 }
 
 .course-resource-actions {

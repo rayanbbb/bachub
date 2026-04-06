@@ -605,6 +605,30 @@ function buildExamListMarkup(items) {
     `).join("");
 }
 
+function setCourseAccordionState(item, isOpen) {
+    if (!item) {
+        return;
+    }
+
+    const trigger = item.querySelector(".course-accordion-trigger");
+    const panel = item.querySelector(".course-accordion-panel");
+    item.classList.toggle("is-open", Boolean(isOpen));
+
+    if (trigger) {
+        trigger.setAttribute("aria-expanded", String(Boolean(isOpen)));
+    }
+
+    if (panel) {
+        panel.style.maxHeight = isOpen ? `${panel.scrollHeight}px` : "0px";
+    }
+}
+
+function syncCourseAccordionHeights() {
+    document.querySelectorAll(".course-accordion-item").forEach((item) => {
+        setCourseAccordionState(item, item.classList.contains("is-open"));
+    });
+}
+
 showLiteraryResult = function (topic) {
     const quiz = literaryQuizzes[topic];
     if (!quiz) {
@@ -707,6 +731,7 @@ showCategory = function (category) {
     }
 
     content.innerHTML = items.map((item, index) => buildCourseAccordionMarkup(item, index)).join("");
+    requestAnimationFrame(syncCourseAccordionHeights);
 };
 
 toggleCourseAccordion = function (trigger) {
@@ -714,16 +739,11 @@ toggleCourseAccordion = function (trigger) {
     const isOpen = currentItem.classList.contains("is-open");
 
     document.querySelectorAll(".course-accordion-item").forEach((item) => {
-        item.classList.remove("is-open");
-        const itemTrigger = item.querySelector(".course-accordion-trigger");
-        if (itemTrigger) {
-            itemTrigger.setAttribute("aria-expanded", "false");
-        }
+        setCourseAccordionState(item, false);
     });
 
     if (!isOpen) {
-        currentItem.classList.add("is-open");
-        trigger.setAttribute("aria-expanded", "true");
+        setCourseAccordionState(currentItem, true);
     }
 };
 
