@@ -41,6 +41,24 @@ Object.assign(translations.en, {
 });
 
 Object.assign(translations.ar, {
+    tab_exams: "الامتحانات",
+    course_label: "Cours",
+    exercises_label: "Exercices"
+});
+
+Object.assign(translations.fr, {
+    tab_exams: "Examens",
+    course_label: "Cours",
+    exercises_label: "Exercices"
+});
+
+Object.assign(translations.en, {
+    tab_exams: "Exams",
+    course_label: "Cours",
+    exercises_label: "Exercices"
+});
+
+Object.assign(translations.ar, {
     ai_status_live: "AI / LIVE",
     ai_status_thinking: "AI / THINKING",
     ai_status_error: "AI / ERROR",
@@ -486,6 +504,107 @@ function renderQuizResultLayout(title, description, subtext) {
     `;
 }
 
+const courseExerciseOverrides = {
+    math: {
+        "Limites et continuite": "math-pdf/exo/exercices-Limites-et-continuite-2bac-Sciences-Physiques-et-svt-3.pdf"
+    }
+};
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function buildResourceButtonMarkup(pdfPath, label, modifier = "") {
+    const buttonLabel = escapeHtml(label);
+    const modifierClass = modifier ? ` ${modifier}` : "";
+
+    if (pdfPath === true || !pdfPath) {
+        return `
+            <button class="resource-action-btn${modifierClass} is-placeholder" type="button" onclick="showPdfAlert()">
+                <i class='bx bx-link-external'></i>
+                <span>${buttonLabel}</span>
+            </button>
+        `;
+    }
+
+    const safePath = String(pdfPath)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    return `
+        <a class="resource-action-btn${modifierClass}" href="${safePath}" target="_blank" rel="noopener noreferrer">
+            <i class='bx bx-link-external'></i>
+            <span>${buttonLabel}</span>
+        </a>
+    `;
+}
+
+function getExercisePdfPath(subject, item) {
+    if (item.exercisePdf) {
+        return item.exercisePdf;
+    }
+
+    if (item.exercisesPdf) {
+        return item.exercisesPdf;
+    }
+
+    const subjectOverrides = courseExerciseOverrides[subject] || {};
+    return subjectOverrides[item.title] || item.pdf || true;
+}
+
+function buildCourseAccordionMarkup(item, index) {
+    const texts = translations[currentLang];
+    const courseLabel = texts.course_label || "Cours";
+    const exercisesLabel = texts.exercises_label || "Exercices";
+    const itemTitle = escapeHtml(item.title);
+    const coursePdf = item.coursePdf || item.pdf;
+    const exercisesPdf = getExercisePdfPath(currentSubject, item);
+
+    return `
+        <article class="course-accordion-item${index === 0 ? " is-open" : ""}">
+            <button class="course-accordion-trigger" type="button" aria-expanded="${index === 0 ? "true" : "false"}" onclick="toggleCourseAccordion(this)">
+                <div class="course-accordion-copy">
+                    <div class="item-icon">
+                        <i class='bx bxs-file-pdf'></i>
+                    </div>
+                    <div class="course-accordion-text">
+                        <strong>${itemTitle}</strong>
+                        <span>${escapeHtml(currentSubject.toUpperCase())} / ${escapeHtml(currentCategory.toUpperCase())}</span>
+                    </div>
+                </div>
+                <i class='bx bx-chevron-down course-accordion-arrow'></i>
+            </button>
+
+            <div class="course-accordion-panel">
+                <div class="course-resource-actions">
+                    ${buildResourceButtonMarkup(coursePdf, courseLabel)}
+                    ${buildResourceButtonMarkup(exercisesPdf, exercisesLabel, "secondary")}
+                </div>
+            </div>
+        </article>
+    `;
+}
+
+function buildExamListMarkup(items) {
+    return items.map((item) => `
+        <div class="exam-list-item">
+            <div class="item-copy">
+                <div class="item-icon">
+                    <i class='bx bx-medal'></i>
+                </div>
+                <span>${escapeHtml(item.title)}</span>
+            </div>
+            ${buildPdfButtonMarkup(item.pdf)}
+        </div>
+    `).join("");
+}
+
 showLiteraryResult = function (topic) {
     const quiz = literaryQuizzes[topic];
     if (!quiz) {
@@ -545,6 +664,17 @@ showCategory = function (category) {
     const subjectData = subjectsData[currentSubject];
     content.innerHTML = "";
 
+    if (category === "exams") {
+        const exams = wataniyatData[currentSubject] || [];
+        if (exams.length === 0) {
+            renderEmptyState(content);
+            return;
+        }
+
+        content.innerHTML = buildExamListMarkup(exams);
+        return;
+    }
+
     if (!subjectData || !subjectData[category] || subjectData[category].length === 0) {
         renderEmptyState(content);
         return;
@@ -555,7 +685,8 @@ showCategory = function (category) {
     if (category !== "quizzes" && cadreReferences[currentSubject]) {
         items.unshift({
             title: translations[currentLang].cadre_reference,
-            pdf: cadreReferences[currentSubject]
+            pdf: cadreReferences[currentSubject],
+            exercisePdf: true
         });
     }
 
@@ -575,17 +706,25 @@ showCategory = function (category) {
         return;
     }
 
-    content.innerHTML = items.map((item) => `
-        <div class="lesson-item">
-            <div class="item-copy">
-                <div class="item-icon">
-                    <i class='bx bxs-file-pdf'></i>
-                </div>
-                <span>${item.title}</span>
-            </div>
-            ${buildPdfButtonMarkup(item.pdf)}
-        </div>
-    `).join("");
+    content.innerHTML = items.map((item, index) => buildCourseAccordionMarkup(item, index)).join("");
+};
+
+toggleCourseAccordion = function (trigger) {
+    const currentItem = trigger.closest(".course-accordion-item");
+    const isOpen = currentItem.classList.contains("is-open");
+
+    document.querySelectorAll(".course-accordion-item").forEach((item) => {
+        item.classList.remove("is-open");
+        const itemTrigger = item.querySelector(".course-accordion-trigger");
+        if (itemTrigger) {
+            itemTrigger.setAttribute("aria-expanded", "false");
+        }
+    });
+
+    if (!isOpen) {
+        currentItem.classList.add("is-open");
+        trigger.setAttribute("aria-expanded", "true");
+    }
 };
 
 showWataniyat = function (topic) {

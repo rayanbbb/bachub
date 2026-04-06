@@ -1972,6 +1972,8 @@ html[dir="ltr"] .slide-card {
   min-height: 320px;
 }
 
+.course-accordion-item,
+.exam-list-item,
 .lesson-item,
 .wataniyat-card,
 .quiz-card {
@@ -1983,6 +1985,130 @@ html[dir="ltr"] .slide-card {
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
+}
+
+.course-accordion-item,
+.exam-list-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+}
+
+.course-accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 18px;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.course-accordion-copy,
+.course-accordion-text {
+  display: flex;
+  align-items: center;
+}
+
+.course-accordion-copy {
+  gap: 14px;
+  min-width: 0;
+}
+
+.course-accordion-text {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.course-accordion-text strong,
+.exam-list-item .item-copy span {
+  color: var(--text-main);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.course-accordion-text span {
+  color: var(--text-muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+}
+
+.course-accordion-arrow {
+  flex-shrink: 0;
+  color: var(--text-soft);
+  font-size: 1.4rem;
+  transition: transform var(--ease), color var(--ease);
+}
+
+.course-accordion-item.is-open .course-accordion-arrow {
+  transform: rotate(180deg);
+  color: var(--blue);
+}
+
+.course-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ease);
+}
+
+.course-accordion-panel > * {
+  min-height: 0;
+}
+
+.course-accordion-item.is-open .course-accordion-panel {
+  grid-template-rows: 1fr;
+}
+
+.course-resource-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.resource-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  min-width: 140px;
+  padding: 0.82rem 1.05rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 77, 99, 0.22);
+  background: linear-gradient(135deg, rgba(255, 77, 99, 0.18), rgba(107, 188, 255, 0.08));
+  color: #fff;
+  font-weight: 700;
+  transition: transform var(--ease), border-color var(--ease), background var(--ease), color var(--ease);
+}
+
+.resource-action-btn.secondary {
+  border-color: rgba(107, 188, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-soft);
+}
+
+.resource-action-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.resource-action-btn.is-placeholder {
+  border-style: dashed;
+}
+
+.exam-list-item {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
 }
 
 .quiz-card {
@@ -2654,6 +2780,23 @@ html[dir="ltr"] .slide-card {
 
   .auth-dropdown__item {
     justify-content: flex-start;
+  }
+
+  .exam-list-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .course-accordion-trigger {
+    padding: 16px;
+  }
+
+  .course-resource-actions {
+    padding: 0 16px 16px;
+  }
+
+  .resource-action-btn {
+    width: 100%;
   }
 
   .topbar,
