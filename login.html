@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | BacHub</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth-page auth-pending">
+    <div class="auth-page-loader">
+        <div class="auth-page-loader__card">Checking session...</div>
+    </div>
+
+    <main class="auth-shell">
+        <section class="auth-card">
+            <a class="auth-brand" href="login.html">
+                <div class="auth-brand__mark">
+                    <i class="bx bx-brain"></i>
+                </div>
+                <div class="auth-brand__copy">
+                    <strong>BacHub</strong>
+                    <span>2BAC PC / Secure access</span>
+                </div>
+            </a>
+
+            <span class="auth-card__kicker">Student Login</span>
+            <h1>Welcome back.</h1>
+            <p>Sign in to continue to your BacHub dashboard, study documents, national exams, and AI assistant.</p>
+
+            <form class="auth-form" data-auth-form>
+                <div class="auth-field">
+                    <label for="login-email">Email</label>
+                    <input id="login-email" name="email" type="email" autocomplete="email" required>
+                </div>
+
+                <div class="auth-field">
+                    <label for="login-password">Password</label>
+                    <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+                </div>
+
+                <button class="auth-button" type="submit">
+                    <i class="bx bx-log-in-circle"></i>
+                    <span>Log in</span>
+                </button>
+            </form>
+
+            <div class="auth-message" data-auth-message hidden></div>
+
+            <div class="auth-links">
+                <span>Need an account? <a href="signup.html">Create one</a></span>
+                <a href="signup.html">Go to signup</a>
+            </div>
+        </section>
+
+        <aside class="auth-side">
+            <div class="auth-side__copy">
+                <span>Protected Learning Space</span>
+                <h2>Study smarter, not louder.</h2>
+                <p>BacHub keeps your lessons, PDFs, wataniyat, and AI study tools inside one focused environment for Moroccan 2BAC PC students.</p>
+            </div>
+
+            <div class="auth-benefits">
+                <div class="auth-benefit">
+                    <i class="bx bx-book-open"></i>
+                    <div>
+                        <strong>Structured subjects</strong>
+                        <span>Physics, math, SVT, English, and philosophy in one place.</span>
+                    </div>
+                </div>
+                <div class="auth-benefit">
+                    <i class="bx bx-medal"></i>
+                    <div>
+                        <strong>National exams</strong>
+                        <span>Quick access to wataniyat and reference documents.</span>
+                    </div>
+                </div>
+                <div class="auth-benefit">
+                    <i class="bx bx-bot"></i>
+                    <div>
+                        <strong>AI help</strong>
+                        <span>Ask questions and review with the integrated AI assistant.</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        window.BacHubAuth.initAuthPage('login');
+    </script>
+</body>
+</html>

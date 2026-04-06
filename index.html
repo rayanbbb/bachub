@@ -10,7 +10,14 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="auth-pending">
+    <div class="auth-loader" aria-live="polite">
+        <div class="auth-loader__card">
+            <i class="bx bx-loader-alt bx-spin"></i>
+            <span>Checking your session...</span>
+        </div>
+    </div>
+
     <div class="app-container">
         <header class="topbar panel-surface">
             <a href="#" class="brand-lockup" onclick="goTo('home'); return false;">
@@ -44,10 +51,23 @@
                 </ul>
             </nav>
 
-            <div class="lang-switcher panel-surface">
-                <button onclick="setLang('ar')" id="lang-ar">AR</button>
-                <button onclick="setLang('fr')" id="lang-fr">FR</button>
-                <button onclick="setLang('en')" class="active" id="lang-en">EN</button>
+            <div class="topbar-tools">
+                <div class="lang-switcher panel-surface">
+                    <button onclick="setLang('ar')" id="lang-ar">AR</button>
+                    <button onclick="setLang('fr')" id="lang-fr">FR</button>
+                    <button onclick="setLang('en')" class="active" id="lang-en">EN</button>
+                </div>
+
+                <div class="auth-controls">
+                    <div class="auth-user-chip panel-surface" id="auth-user-chip" hidden>
+                        <i class="bx bx-user-circle"></i>
+                        <span id="auth-user-email"></span>
+                    </div>
+                    <button class="logout-btn panel-surface" id="logout-btn" type="button" hidden>
+                        <i class="bx bx-log-out-circle"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -442,6 +462,12 @@
         </main>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        window.BacHubAuth.requireAuth();
+    </script>
     <script src="app.js"></script>
     <script src="app-overrides.js"></script>
 </body>

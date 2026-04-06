@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | BacHub</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth-page auth-pending">
+    <div class="auth-page-loader">
+        <div class="auth-page-loader__card">Preparing signup...</div>
+    </div>
+
+    <main class="auth-shell">
+        <section class="auth-card">
+            <a class="auth-brand" href="login.html">
+                <div class="auth-brand__mark">
+                    <i class="bx bx-brain"></i>
+                </div>
+                <div class="auth-brand__copy">
+                    <strong>BacHub</strong>
+                    <span>2BAC PC / Account setup</span>
+                </div>
+            </a>
+
+            <span class="auth-card__kicker">Create Account</span>
+            <h1>Start your secure workspace.</h1>
+            <p>Create your BacHub account to unlock the protected study dashboard and keep your revision space focused.</p>
+
+            <form class="auth-form" data-auth-form>
+                <div class="auth-field">
+                    <label for="signup-email">Email</label>
+                    <input id="signup-email" name="email" type="email" autocomplete="email" required>
+                </div>
+
+                <div class="auth-field">
+                    <label for="signup-password">Password</label>
+                    <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="6" required>
+                </div>
+
+                <button class="auth-button" type="submit">
+                    <i class="bx bx-user-plus"></i>
+                    <span>Create account</span>
+                </button>
+            </form>
+
+            <div class="auth-message" data-auth-message hidden></div>
+
+            <div class="auth-links">
+                <span>Already registered? <a href="login.html">Log in</a></span>
+                <a href="login.html">Back to login</a>
+            </div>
+        </section>
+
+        <aside class="auth-side">
+            <div class="auth-side__copy">
+                <span>Members only</span>
+                <h2>One account, one focused revision hub.</h2>
+                <p>Your account gives you direct access to the BacHub dashboard, organized subject resources, and the AI study assistant after login.</p>
+            </div>
+
+            <div class="auth-benefits">
+                <div class="auth-benefit">
+                    <i class="bx bx-lock-alt"></i>
+                    <div>
+                        <strong>Protected access</strong>
+                        <span>Only signed-in students can enter the main study dashboard.</span>
+                    </div>
+                </div>
+                <div class="auth-benefit">
+                    <i class="bx bx-layer"></i>
+                    <div>
+                        <strong>Everything together</strong>
+                        <span>Lessons, PDFs, exams, and AI live in the same workspace.</span>
+                    </div>
+                </div>
+                <div class="auth-benefit">
+                    <i class="bx bx-rocket"></i>
+                    <div>
+                        <strong>Fast access after login</strong>
+                        <span>Once signed in, you go straight back to the main site.</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        window.BacHubAuth.initAuthPage('signup');
+    </script>
+</body>
+</html>
