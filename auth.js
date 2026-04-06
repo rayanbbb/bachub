@@ -2,6 +2,7 @@
     const LOGIN_PAGE = "login.html";
     const SIGNUP_PAGE = "signup.html";
     const HOME_PAGE = "index.html";
+    const GUEST_ACCESS_KEY = "bachub_guest_access";
 
     function getClient() {
         if (!window.supabaseClient) {
@@ -65,6 +66,40 @@
         window.location.replace(path);
     }
 
+    function setAccessMode(mode) {
+        if (!document.body) {
+            return;
+        }
+
+        document.body.dataset.accessMode = mode;
+    }
+
+    function isGuestAccessEnabled() {
+        try {
+            return window.sessionStorage.getItem(GUEST_ACCESS_KEY) === "true";
+        } catch (error) {
+            console.warn("Unable to read guest access state.", error);
+            return false;
+        }
+    }
+
+    function setGuestAccessEnabled(isEnabled) {
+        try {
+            if (isEnabled) {
+                window.sessionStorage.setItem(GUEST_ACCESS_KEY, "true");
+                return;
+            }
+
+            window.sessionStorage.removeItem(GUEST_ACCESS_KEY);
+        } catch (error) {
+            console.warn("Unable to update guest access state.", error);
+        }
+    }
+
+    function clearGuestAccess() {
+        setGuestAccessEnabled(false);
+    }
+
     function getUserDisplayName(user) {
         const metadataName = user?.user_metadata?.display_name;
         if (typeof metadataName === "string" && metadataName.trim()) {
@@ -117,11 +152,10 @@
     }
 
     function positionDropdown() {
-        const userMenu = document.getElementById("auth-user-menu");
         const avatarButton = document.getElementById("auth-avatar-btn");
         const dropdown = document.getElementById("auth-dropdown");
 
-        if (!userMenu || !avatarButton || !dropdown || userMenu.hidden || dropdown.hidden) {
+        if (!avatarButton || !dropdown || avatarButton.hidden || dropdown.hidden) {
             return;
         }
 
@@ -197,6 +231,9 @@
         if (logoutButton) {
             logoutButton.disabled = false;
         }
+
+        clearGuestAccess();
+        setAccessMode("authenticated");
     }
 
     function clearProtectedUi() {
@@ -235,6 +272,8 @@
         if (logoutButton) {
             logoutButton.disabled = false;
         }
+
+        setAccessMode(isGuestAccessEnabled() ? "guest" : "anonymous");
     }
 
     async function getSession() {
@@ -249,6 +288,25 @@
     function handleMenuPlaceholder(label) {
         setMenuOpen(false);
         alert(`${label} will be available soon.`);
+    }
+
+    function continueAsGuest() {
+        setGuestAccessEnabled(true);
+        setAccessMode("guest");
+        redirectTo(getPostAuthRedirectUrl());
+    }
+
+    function initGuestActions() {
+        document.querySelectorAll("[data-guest-action]").forEach((button) => {
+            if (button.dataset.bound === "true") {
+                return;
+            }
+
+            button.dataset.bound = "true";
+            button.addEventListener("click", () => {
+                continueAsGuest();
+            });
+        });
     }
 
     function initUserMenu() {
@@ -358,7 +416,7 @@
             }
 
             clearProtectedUi();
-            if (!isAuthPage() && event === "SIGNED_OUT") {
+            if (!isAuthPage() && event === "SIGNED_OUT" && !isGuestAccessEnabled()) {
                 redirectTo(getLoginRedirectUrl());
             }
         });
@@ -372,6 +430,12 @@
         let shouldReveal = false;
 
         try {
+            if (isGuestAccessEnabled()) {
+                clearProtectedUi();
+                shouldReveal = true;
+                return { guest: true };
+            }
+
             const session = await getSession();
             if (!session) {
                 clearProtectedUi();
@@ -439,6 +503,7 @@
                 throw error;
             }
 
+            clearGuestAccess();
             updateProtectedUi(data.session);
             redirectTo(getPostAuthRedirectUrl());
         } catch (error) {
@@ -484,6 +549,7 @@
             }
 
             if (data.session) {
+                clearGuestAccess();
                 updateProtectedUi(data.session);
                 redirectTo(getPostAuthRedirectUrl());
                 return;
@@ -501,6 +567,7 @@
 
     async function initAuthPage(mode) {
         initAuthSubscription();
+        initGuestActions();
         const session = await redirectAuthenticatedUser();
         if (session) {
             return;

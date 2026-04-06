@@ -275,9 +275,48 @@ input:focus {
   box-shadow: 0 18px 42px rgba(255, 92, 115, 0.22);
 }
 
+.auth-button--secondary,
+.auth-button--ghost {
+  border: 1px solid var(--auth-line);
+  color: var(--auth-text);
+  box-shadow: none;
+}
+
+.auth-button--secondary {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.auth-button--ghost {
+  background:
+    linear-gradient(180deg, rgba(107, 188, 255, 0.08), transparent 38%),
+    rgba(255, 255, 255, 0.02);
+  color: var(--auth-soft);
+}
+
 .auth-button:disabled {
   opacity: 0.7;
   cursor: wait;
+}
+
+.auth-alt-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.auth-alt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.auth-guest-note {
+  margin: 0;
+  color: var(--auth-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .auth-message {
@@ -312,6 +351,14 @@ input:focus {
 
 .auth-links a {
   color: var(--auth-blue);
+}
+
+.auth-link-button {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--auth-blue);
+  cursor: pointer;
 }
 
 .auth-side__copy {
@@ -401,5 +448,9 @@ input:focus {
 
   .auth-links {
     flex-direction: column;
+  }
+
+  .auth-alt-grid {
+    grid-template-columns: 1fr;
   }
 }
