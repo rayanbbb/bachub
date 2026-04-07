@@ -284,10 +284,10 @@
                                     <p class="sc-subtitle" data-i18n="subject_pc_desc">Physics-Chemistry Core Subject</p>
                                 </div>
                                 <div class="sc-progress">
-                                    <div class="sc-progress-bar" style="--w: 34%"></div>
+                                    <div class="sc-progress-bar" id="home-prog-bar-pc" style="--w: 0%"></div>
                                 </div>
                                 <div class="sc-footer">
-                                    <span class="sc-pct">34%</span>
+                                    <span class="sc-pct" id="home-pct-pc">0%</span>
                                     <span class="sc-open"><i class="bx bx-up-arrow-alt"></i></span>
                                 </div>
                             </div>
@@ -307,9 +307,9 @@
                             <div class="sc-body">
                                 <div class="sc-lang" data-i18n="subject_math">Mathématiques</div>
                                 <div class="sc-progress">
-                                    <div class="sc-progress-bar sc-progress-bar-red" style="--w: 28%"></div>
+                                    <div class="sc-progress-bar sc-progress-bar-red" id="home-prog-bar-math" style="--w: 0%"></div>
                                 </div>
-                                <span class="sc-pct">28%</span>
+                                <span class="sc-pct" id="home-pct-math">0%</span>
                             </div>
                         </article>
 
@@ -329,10 +329,10 @@
                                     <p class="sc-subtitle" data-i18n="subject_svt_desc">Life and Earth Sciences</p>
                                 </div>
                                 <div class="sc-progress">
-                                    <div class="sc-progress-bar sc-progress-bar-green" style="--w: 41%"></div>
+                                    <div class="sc-progress-bar sc-progress-bar-green" id="home-prog-bar-svt" style="--w: 0%"></div>
                                 </div>
                                 <div class="sc-footer">
-                                    <span class="sc-pct">41%</span>
+                                    <span class="sc-pct" id="home-pct-svt">0%</span>
                                     <span class="sc-open"><i class="bx bx-up-arrow-alt"></i></span>
                                 </div>
                             </div>
@@ -353,10 +353,10 @@
                                     <p class="sc-subtitle" data-i18n="subject_english_desc">English Language</p>
                                 </div>
                                 <div class="sc-progress">
-                                    <div class="sc-progress-bar sc-progress-bar-orange" style="--w: 38%"></div>
+                                    <div class="sc-progress-bar sc-progress-bar-orange" id="home-prog-bar-english" style="--w: 0%"></div>
                                 </div>
                                 <div class="sc-footer">
-                                    <span class="sc-pct">38%</span>
+                                    <span class="sc-pct" id="home-pct-english">0%</span>
                                     <span class="sc-open"><i class="bx bx-up-arrow-alt"></i></span>
                                 </div>
                             </div>
@@ -376,10 +376,10 @@
                                     <p class="sc-subtitle" data-i18n="subject_philo_desc">Philosophy Subject</p>
                                 </div>
                                 <div class="sc-progress">
-                                    <div class="sc-progress-bar sc-progress-bar-purple" style="--w: 45%"></div>
+                                    <div class="sc-progress-bar sc-progress-bar-purple" id="home-prog-bar-philo" style="--w: 0%"></div>
                                 </div>
                                 <div class="sc-footer">
-                                    <span class="sc-pct">45%</span>
+                                    <span class="sc-pct" id="home-pct-philo">0%</span>
                                     <span class="sc-open"><i class="bx bx-up-arrow-alt"></i></span>
                                 </div>
                             </div>
@@ -411,6 +411,14 @@
                         <button class="inner-tab-btn" onclick="showCategory('sem2')" data-i18n="tab_sem2">Semester 2</button>
                         <button class="inner-tab-btn" onclick="showCategory('exams')" data-i18n="tab_exams">Exams</button>
                         <button class="inner-tab-btn" onclick="showCategory('quizzes')" data-i18n="tab_quizzes">Quizzes &amp; Tests</button>
+                    </div>
+
+                    <div id="subject-prog-strip" class="subject-prog-strip panel-surface">
+                        <span class="subject-prog-label">Progress</span>
+                        <div class="sc-progress" style="flex:1;">
+                            <div class="sc-progress-bar" id="subject-prog-bar" style="--w: 0%"></div>
+                        </div>
+                        <span class="sc-pct" id="subject-prog-pct">0%</span>
                     </div>
 
                     <div id="subject-content" class="subject-content panel-surface"></div>

@@ -405,11 +405,11 @@ function showCategory(category) {
 
     const contentDiv = document.getElementById('subject-content');
     contentDiv.innerHTML = '';
-    
+
     if (subjectsData[currentSubject] && subjectsData[currentSubject][category]) {
         const items = subjectsData[currentSubject][category];
         if (items.length > 0) {
-            items.forEach(item => {
+            items.forEach((item, idx) => {
                 if (category === 'quizzes') {
                     contentDiv.innerHTML += `
                         <div class="quiz-card" onclick="${item.action}">
@@ -425,11 +425,26 @@ function showCategory(category) {
                         : `<a class="btn primary-btn" style="width:auto; padding:0.5rem 1rem; font-size:0.82rem;" href="${String(item.pdf).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;")}" target="_blank" rel="noopener noreferrer">
                                 <i class='bx bx-link-external'></i> ${translations[currentLang].btn_download}
                            </a>`;
+                    const p = _progressCache[toCourseKey(currentSubject, category, idx)] || {};
                     contentDiv.innerHTML += `
                         <div class="lesson-item">
-                            <div style="display:flex; align-items:center; gap: 12px;">
+                            <div style="display:flex; align-items:center; gap: 12px; flex:1; min-width:0;">
                                 <i class='bx bxs-file-pdf' style="color: #f87171; font-size: 1.6rem; flex-shrink:0;"></i>
                                 <span>${item.title}</span>
+                            </div>
+                            <div class="progress-checks">
+                                <label class="check-pill">
+                                    <input type="checkbox" ${p.cours ? 'checked' : ''} onchange="toggleProgress('${currentSubject}','${category}',${idx},'cours',this.checked)">
+                                    <i class="bx bx-book-open"></i> Cours
+                                </label>
+                                <label class="check-pill">
+                                    <input type="checkbox" ${p.exercices ? 'checked' : ''} onchange="toggleProgress('${currentSubject}','${category}',${idx},'exercices',this.checked)">
+                                    <i class="bx bx-pencil"></i> Exercices
+                                </label>
+                                <label class="check-pill">
+                                    <input type="checkbox" ${p.examen ? 'checked' : ''} onchange="toggleProgress('${currentSubject}','${category}',${idx},'examen',this.checked)">
+                                    <i class="bx bx-award"></i> Examen
+                                </label>
                             </div>
                             ${buttonMarkup}
                         </div>
@@ -440,6 +455,7 @@ function showCategory(category) {
             contentDiv.innerHTML = `<h3 style="text-align:center; color: var(--text-muted); margin-top:2rem;" data-i18n="empty_lessons">${translations[currentLang].empty_lessons}</h3>`;
         }
     }
+    updateSubjectPageProgress();
 }
 
 function showWataniyat(topic) {
@@ -594,6 +610,159 @@ function wrongAnswer() {
     alert(translations[currentLang].quiz_wrong);
 }
 
+// ====== PROGRESS TRACKING ====== //
+const TRACKABLE_CATS = ['sem1', 'sem2'];
+let _progressCache = {};
+let _currentUserId = null;
+
+function toCourseKey(subject, cat, idx) {
+    return `${subject}_${cat}_${idx}`;
+}
+
+function calcSubjectProgress(subject) {
+    let total = 0, checked = 0;
+    TRACKABLE_CATS.forEach(cat => {
+        const items = (subjectsData[subject] && subjectsData[subject][cat]) || [];
+        items.forEach((_, idx) => {
+            const p = _progressCache[toCourseKey(subject, cat, idx)] || {};
+            total += 3;
+            checked += (p.cours ? 1 : 0) + (p.exercices ? 1 : 0) + (p.examen ? 1 : 0);
+        });
+    });
+    return total > 0 ? Math.round((checked / total) * 100) : 0;
+}
+
+function updateSubjectPageProgress() {
+    const pct = calcSubjectProgress(currentSubject);
+    const bar = document.getElementById('subject-prog-bar');
+    const span = document.getElementById('subject-prog-pct');
+    if (bar) bar.style.setProperty('--w', `${pct}%`);
+    if (span) span.textContent = `${pct}%`;
+}
+
+function updateAllProgressBars() {
+    ['pc', 'math', 'svt', 'english', 'philo'].forEach(subject => {
+        const pct = calcSubjectProgress(subject);
+        const bar = document.getElementById(`home-prog-bar-${subject}`);
+        const span = document.getElementById(`home-pct-${subject}`);
+        if (bar) bar.style.setProperty('--w', `${pct}%`);
+        if (span) span.textContent = `${pct}%`;
+    });
+    updateSubjectPageProgress();
+}
+
+async function initProgress() {
+    try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (session?.user) {
+            _currentUserId = session.user.id;
+            await loadProgressFromDB();
+        } else {
+            loadProgressFromStorage();
+        }
+    } catch (e) {
+        loadProgressFromStorage();
+    }
+
+    window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+            _currentUserId = session.user.id;
+            await loadProgressFromDB();
+        } else {
+            _currentUserId = null;
+            loadProgressFromStorage();
+        }
+    });
+}
+
+async function loadProgressFromDB() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('user_progress')
+            .select('course_key, cours, exercices, examen')
+            .eq('user_id', _currentUserId);
+        if (error) throw error;
+        _progressCache = {};
+        (data || []).forEach(row => {
+            _progressCache[row.course_key] = {
+                cours: !!row.cours,
+                exercices: !!row.exercices,
+                examen: !!row.examen
+            };
+        });
+    } catch (e) {
+        console.warn('Could not load progress from Supabase:', e.message);
+        loadProgressFromStorage();
+        return;
+    }
+    updateAllProgressBars();
+    const isLessonsActive = document.getElementById('lessons')?.classList.contains('active-view');
+    if (isLessonsActive && !['quizzes', 'exams'].includes(currentCategory)) {
+        showCategory(currentCategory);
+    }
+}
+
+function loadProgressFromStorage() {
+    try {
+        const raw = localStorage.getItem('bachub_progress');
+        _progressCache = raw ? JSON.parse(raw) : {};
+    } catch (e) {
+        _progressCache = {};
+    }
+    updateAllProgressBars();
+}
+
+async function toggleProgress(subject, cat, idx, field, checked) {
+    const key = toCourseKey(subject, cat, idx);
+    if (!_progressCache[key]) _progressCache[key] = { cours: false, exercices: false, examen: false };
+    _progressCache[key][field] = checked;
+
+    updateAllProgressBars();
+
+    if (_currentUserId) {
+        try {
+            await window.supabaseClient.from('user_progress').upsert({
+                user_id: _currentUserId,
+                subject,
+                course_key: key,
+                cours: _progressCache[key].cours,
+                exercices: _progressCache[key].exercices,
+                examen: _progressCache[key].examen,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id,course_key' });
+        } catch (e) {
+            console.warn('Could not save progress to Supabase:', e.message);
+        }
+    } else {
+        try {
+            localStorage.setItem('bachub_progress', JSON.stringify(_progressCache));
+        } catch (e) {}
+    }
+}
+
+// Expose progress data for AI Study Planner
+function getProgressSummary() {
+    const summary = {};
+    ['pc', 'math', 'svt', 'english', 'philo'].forEach(subject => {
+        summary[subject] = {
+            percentage: calcSubjectProgress(subject),
+            courses: {}
+        };
+        TRACKABLE_CATS.forEach(cat => {
+            const items = (subjectsData[subject] && subjectsData[subject][cat]) || [];
+            items.forEach((item, idx) => {
+                const key = toCourseKey(subject, cat, idx);
+                summary[subject].courses[key] = {
+                    title: item.title,
+                    ...((_progressCache[key]) || { cours: false, exercices: false, examen: false })
+                };
+            });
+        });
+    });
+    return summary;
+}
+window.getProgressSummary = getProgressSummary;
+
 // Initial Boot
 document.addEventListener("DOMContentLoaded", () => {
     translatePage();
@@ -603,4 +772,5 @@ document.addEventListener("DOMContentLoaded", () => {
         chatHistory = [{ role: 'assistant', content: welcomeMessage.textContent.trim() }];
     }
     setChatStatus('idle');
+    initProgress();
 });

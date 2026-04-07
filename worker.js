@@ -1,5 +1,5 @@
 const ALLOWED_ORIGIN = "*";
-const AI_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
+const AI_MODEL = "openai/gpt-oss-20b:free";
 const GITHUB_PAGES_DATA_BASE_URL = "https://rayanbbb.github.io/bachub/data";
 const GITHUB_RAW_DATA_BASE_URL = "https://raw.githubusercontent.com/rayanbbb/bachub/main/data";
 const KNOWLEDGE_CACHE_TTL_MS = 5 * 60 * 1000;
@@ -546,6 +546,10 @@ async function findRelevantKnowledgeContext(queryText) {
 }
 
 function extractAiReply(result) {
+  if (typeof result?.choices?.[0]?.message?.content === "string" && result.choices[0].message.content.trim()) {
+    return result.choices[0].message.content.trim();
+  }
+
   if (typeof result?.response === "string" && result.response.trim()) {
     return result.response.trim();
   }
@@ -620,39 +624,40 @@ export default {
 
     let aiResult;
     try {
-      aiResult = await env.AI.run(AI_MODEL, { messages });
-    } catch (error) {
-      const status = Number(error?.status || error?.statusCode || 502);
-      const details =
-        error instanceof Error ? error.message : typeof error === "string" ? error : JSON.stringify(error);
-
-      console.error("Workers AI error response:", {
-        status,
-        details,
+      const orResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+        },
+        body: JSON.stringify({ model: AI_MODEL, messages }),
       });
 
-      if (status === 429) {
+      if (!orResponse.ok) {
+        const status = orResponse.status;
+        const details = await orResponse.text();
+        console.error("OpenRouter error response:", { status, details });
+
+        if (status === 429) {
+          return jsonResponse(
+            { reply: "Please wait a moment and try again", model: AI_MODEL, live: false, rateLimited: true },
+            200,
+            origin
+          );
+        }
+
         return jsonResponse(
-          {
-            reply: "Please wait a moment and try again",
-            model: AI_MODEL,
-            live: false,
-            rateLimited: true,
-          },
-          200,
+          { error: "OpenRouter request failed.", upstreamStatus: status, details },
+          status,
           origin
         );
       }
 
-      return jsonResponse(
-        {
-          error: "Workers AI request failed.",
-          upstreamStatus: status,
-          details,
-        },
-        status,
-        origin
-      );
+      aiResult = await orResponse.json();
+    } catch (error) {
+      const details = error instanceof Error ? error.message : JSON.stringify(error);
+      console.error("OpenRouter fetch error:", details);
+      return jsonResponse({ error: "OpenRouter request failed.", details }, 502, origin);
     }
 
     const reply = extractAiReply(aiResult);
