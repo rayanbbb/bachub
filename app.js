@@ -723,10 +723,7 @@ function updateAllProgressBars() {
     updateSubjectPageProgress();
 }
 
-let _progressLoaded = false;
-
 async function initProgress() {
-    // Step 1: render page immediately from getSession()
     try {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         if (session?.user) {
@@ -735,24 +732,12 @@ async function initProgress() {
         } else {
             loadProgressFromStorage();
         }
-        _progressLoaded = true;
     } catch (e) {
         loadProgressFromStorage();
-        _progressLoaded = true;
     }
 
-    // Step 2: listen for login/logout — skip INITIAL_SESSION, already handled above
-    window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'INITIAL_SESSION') return;
-        if (event === 'SIGNED_OUT') {
-            _currentUserId = null;
-            _progressCache = {};
-            updateAllProgressBars();
-            const isLessonsActive = document.getElementById('lessons')?.classList.contains('active-view');
-            if (isLessonsActive && !['quizzes', 'exams'].includes(currentCategory)) {
-                showCategory(currentCategory);
-            }
-        } else if (session?.user) {
+    window.supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+        if (session?.user) {
             _currentUserId = session.user.id;
             await loadProgressFromDB();
         } else {
