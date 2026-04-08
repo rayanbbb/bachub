@@ -723,8 +723,27 @@ function updateAllProgressBars() {
     updateSubjectPageProgress();
 }
 
+let _progressLoaded = false;
+
 async function initProgress() {
+    // Step 1: render page immediately from getSession()
+    try {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (session?.user) {
+            _currentUserId = session.user.id;
+            await loadProgressFromDB();
+        } else {
+            loadProgressFromStorage();
+        }
+        _progressLoaded = true;
+    } catch (e) {
+        loadProgressFromStorage();
+        _progressLoaded = true;
+    }
+
+    // Step 2: listen for login/logout — skip INITIAL_SESSION, already handled above
     window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'INITIAL_SESSION') return;
         if (event === 'SIGNED_OUT') {
             _currentUserId = null;
             _progressCache = {};
