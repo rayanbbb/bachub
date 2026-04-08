@@ -3096,3 +3096,138 @@ html[dir="ltr"] .slide-card {
     padding: 3px 8px;
   }
 }
+
+/* ====== SMART STUDY PLANNER ====== */
+.planner-section {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.planner-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.planner-controls label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.planner-controls input[type="date"] {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text-main);
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.planner-controls input[type="date"]:focus {
+  border-color: var(--accent);
+}
+
+.planner-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.planner-output {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.plan-day-card {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.plan-day-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+
+.plan-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.session-item {
+  border-radius: var(--radius);
+  padding: 0.6rem 0.85rem;
+  border-left: 3px solid var(--line);
+  background: rgba(255,255,255,0.03);
+}
+
+.session-item.priority-high  { border-left-color: #f87171; }
+.session-item.priority-medium { border-left-color: #fb923c; }
+.session-item.priority-low   { border-left-color: #4ade80; }
+
+.session-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.session-subject {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.session-duration {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.session-task {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.plan-day-tip {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 600px) {
+  .planner-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .planner-output {
+    grid-template-columns: 1fr;
+  }
+}

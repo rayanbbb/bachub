@@ -568,6 +568,7 @@ function extractAiReply(result) {
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || ALLOWED_ORIGIN;
+    const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
@@ -599,6 +600,67 @@ export default {
         received: rawBody,
       });
       return jsonResponse({ error: "Invalid JSON body.", received: rawBody || null }, 400, origin);
+    }
+
+    // ====== /plan route ====== //
+    if (url.pathname === "/plan") {
+      const daysLeft = Number(body?.daysLeft) || 30;
+      const progress = body?.progress || {};
+
+      const planSystemPrompt =
+        "You are a smart study coach for a Moroccan 2BAC PC student preparing for the national exam (Baccalauréat). " +
+        "You receive the student's current progress percentage per subject and how many days are left until the exam. " +
+        "Generate a focused, realistic 7-day study plan. " +
+        "Prioritise subjects with low progress. Each day should have 2-4 study sessions. " +
+        "Each session must have: subject, a specific task description, duration (e.g. '45 min'), and priority (high, medium, or low). " +
+        "Also add a short motivational tip per day. " +
+        "Respond with ONLY valid JSON in this exact format, no markdown, no explanation: " +
+        '{ "plan": [ { "day": "Day 1 — Mon Jun 2", "sessions": [ { "subject": "", "task": "", "duration": "", "priority": "high|medium|low" } ], "tip": "" } ] }';
+
+      const planUserMessage =
+        `Days left until exam: ${daysLeft}. ` +
+        `Subject progress — Physics-Chemistry: ${progress.physics ?? 0}%, ` +
+        `Mathematics: ${progress.math ?? 0}%, ` +
+        `SVT: ${progress.svt ?? 0}%, ` +
+        `English: ${progress.english ?? 0}%, ` +
+        `Philosophy: ${progress.philosophy ?? 0}%. ` +
+        "Generate my 7-day study plan as JSON only.";
+
+      let planResult;
+      try {
+        const planResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "openai/gpt-4o-mini:free",
+            messages: [
+              { role: "system", content: planSystemPrompt },
+              { role: "user", content: planUserMessage },
+            ],
+          }),
+        });
+
+        if (!planResponse.ok) {
+          const details = await planResponse.text();
+          return jsonResponse({ error: "OpenRouter plan request failed.", details }, planResponse.status, origin);
+        }
+
+        planResult = await planResponse.json();
+      } catch (err) {
+        return jsonResponse({ error: "OpenRouter plan fetch failed.", details: err instanceof Error ? err.message : String(err) }, 502, origin);
+      }
+
+      const rawPlan = extractAiReply(planResult);
+      try {
+        const cleaned = rawPlan.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+        const parsed = JSON.parse(cleaned);
+        return jsonResponse({ plan: parsed.plan }, 200, origin);
+      } catch {
+        return jsonResponse({ error: "Failed to parse plan JSON.", raw: rawPlan }, 502, origin);
+      }
     }
 
     const message = typeof body?.message === "string" ? body.message.trim() : String(body?.message ?? "").trim();

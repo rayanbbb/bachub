@@ -48,6 +48,10 @@
                         <i class="bx bx-bot"></i>
                         <span data-i18n="nav_ai">AI Assistant</span>
                     </li>
+                    <li data-target="planner">
+                        <i class="bx bx-calendar-check"></i>
+                        <span>Study Planner</span>
+                    </li>
                 </ul>
             </nav>
 
@@ -485,6 +489,30 @@
                                 <i class="bx bx-send"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="planner" class="view hidden-view">
+                <div class="section-shell">
+                    <header class="section-header panel-surface">
+                        <div>
+                            <span class="section-kicker">Smart Study Planner</span>
+                            <h2>Smart Study Planner</h2>
+                        </div>
+                        <p>Generate a personalised 7-day study schedule based on your progress and exam date.</p>
+                    </header>
+
+                    <div class="planner-section panel-surface">
+                        <div class="planner-controls">
+                            <label for="planner-exam-date">National Exam Date</label>
+                            <input type="date" id="planner-exam-date">
+                            <button id="planner-btn" class="btn primary-btn" onclick="generateStudyPlan()">
+                                Generate My Study Plan
+                                <span id="planner-spinner" class="planner-spinner" style="display:none;"></span>
+                            </button>
+                        </div>
+                        <div id="planner-output" class="planner-output"></div>
                     </div>
                 </div>
             </section>

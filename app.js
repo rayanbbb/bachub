@@ -582,6 +582,72 @@ chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleChatSend();
 });
 
+// ====== SMART STUDY PLANNER ====== //
+async function generateStudyPlan() {
+    const dateInput = document.getElementById('planner-exam-date');
+    const outputDiv = document.getElementById('planner-output');
+    const btn = document.getElementById('planner-btn');
+    const spinner = document.getElementById('planner-spinner');
+
+    const examDate = dateInput?.value;
+    if (!examDate) {
+        outputDiv.innerHTML = '<p style="color:#f87171;text-align:center;">Please select your exam date.</p>';
+        return;
+    }
+
+    const daysLeft = Math.max(1, Math.ceil((new Date(examDate) - new Date()) / 86400000));
+
+    const progress = {
+        physics:    calcSubjectProgress('pc'),
+        math:       calcSubjectProgress('math'),
+        svt:        calcSubjectProgress('svt'),
+        english:    calcSubjectProgress('english'),
+        philosophy: calcSubjectProgress('philo'),
+    };
+
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    outputDiv.innerHTML = '';
+
+    try {
+        const res = await fetch(`${AI_PROXY_URL}/plan`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ daysLeft, progress }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.plan) throw new Error(data.error || 'No plan returned');
+        renderStudyPlan(data.plan);
+    } catch (err) {
+        outputDiv.innerHTML = `<p style="color:#f87171;text-align:center;">Could not generate plan. Try again.</p>`;
+    } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+    }
+}
+
+function renderStudyPlan(plan) {
+    const outputDiv = document.getElementById('planner-output');
+    const priorityColors = { high: 'priority-high', medium: 'priority-medium', low: 'priority-low' };
+    outputDiv.innerHTML = plan.map(day => `
+        <div class="plan-day-card panel-surface">
+            <h3 class="plan-day-title">${day.day}</h3>
+            <div class="plan-sessions">
+                ${(day.sessions || []).map(s => `
+                    <div class="session-item ${priorityColors[s.priority] || ''}">
+                        <div class="session-meta">
+                            <span class="session-subject">${s.subject}</span>
+                            <span class="session-duration">${s.duration}</span>
+                        </div>
+                        <p class="session-task">${s.task}</p>
+                    </div>
+                `).join('')}
+            </div>
+            ${day.tip ? `<p class="plan-day-tip">💡 ${day.tip}</p>` : ''}
+        </div>
+    `).join('');
+}
+
 // Quiz Execution
 function startQuiz() {
     const qc = document.getElementById('subject-content');
