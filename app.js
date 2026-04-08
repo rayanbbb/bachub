@@ -29,6 +29,7 @@ const translations = {
         tab_sem1: "الدورة الأولى",
         tab_sem2: "الدورة الثانية",
         tab_quizzes: "كويزات الاختبار",
+        tab_exams: "الامتحانات",
         wataniyat_title: "الامتحانات الوطنية 🎓",
         wataniyat_desc: "الوطنيات السابقة مقسمة حسب المواد لتسهيل المراجعة",
         empty_lessons: "قريبا غنحطو دروس هاد المادة...",
@@ -78,6 +79,7 @@ const translations = {
         tab_sem1: "1er Semestre",
         tab_sem2: "2ème Semestre",
         tab_quizzes: "Quiz & Tests",
+        tab_exams: "Examens",
         wataniyat_title: "Examens Nationaux 🎓",
         wataniyat_desc: "Examens nationaux précédents par matière",
         empty_lessons: "Le contenu de cette matière sera bientôt disponible...",
@@ -127,6 +129,7 @@ const translations = {
         tab_sem1: "Semester 1",
         tab_sem2: "Semester 2",
         tab_quizzes: "Quizzes & Tests",
+        tab_exams: "Exams",
         wataniyat_title: "National Exams 🎓",
         wataniyat_desc: "Past national exams grouped by subject",
         empty_lessons: "Content for this subject will be available soon...",
@@ -403,6 +406,9 @@ function showCategory(category) {
     innerTabs.forEach(t => t.classList.remove('active'));
     document.querySelector(`.inner-tab-btn[onclick="showCategory('${category}')"]`).classList.add('active');
 
+    const strip = document.getElementById('subject-prog-strip');
+    if (strip) strip.style.display = ['exams', 'quizzes'].includes(category) ? 'none' : '';
+
     const contentDiv = document.getElementById('subject-content');
     contentDiv.innerHTML = '';
 
@@ -652,20 +658,16 @@ function updateAllProgressBars() {
 }
 
 async function initProgress() {
-    try {
-        const { data: { session } } = await window.supabaseClient.auth.getSession();
-        if (session?.user) {
-            _currentUserId = session.user.id;
-            await loadProgressFromDB();
-        } else {
-            loadProgressFromStorage();
-        }
-    } catch (e) {
-        loadProgressFromStorage();
-    }
-
     window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
+        if (event === 'SIGNED_OUT') {
+            _currentUserId = null;
+            _progressCache = {};
+            updateAllProgressBars();
+            const isLessonsActive = document.getElementById('lessons')?.classList.contains('active-view');
+            if (isLessonsActive && !['quizzes', 'exams'].includes(currentCategory)) {
+                showCategory(currentCategory);
+            }
+        } else if (session?.user) {
             _currentUserId = session.user.id;
             await loadProgressFromDB();
         } else {
